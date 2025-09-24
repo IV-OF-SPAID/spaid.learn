@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Glogo from "../assets/img/gLogo.svg";
 import Flogo from "../assets/img/fLogo.svg";
 import NavLogin from "./NavLogin";
+import { div } from "framer-motion/client";
+import supabase from "../config/supabaseClient";
 
 const Login = () => {
   return (
@@ -41,31 +43,27 @@ const Login = () => {
               <hr className="flex-grow border-t border-gray-300"></hr>
             </div>
             <form
-              action=""
-              method="get"
               className=" w-full h-50 gap-2 flex flex-col"
             >
               <h1 className="poppins-regular text-xs">Email Address: </h1>
               <input
                 type="email"
-                name=""
-                id=""
-                placeholder="name@gmail.com"
+                placeholder="Enter email address"
                 className="w-full h-10 text-xs p-5 border-1 border-[rgba(0,0,0,0.25)] rounded-lg"
+                required
               />
               <h1 className="poppins-regular text-xs">Password: </h1>
               <input
                 type="password"
-                name=""
-                id=""
-                placeholder="**************"
+                placeholder="Enter password"
                 className="w-full h-10 text-xs p-5 border-1 border-[rgba(0,0,0,0.25)] rounded-lg"
+                required
               />
               <div className="flex items-center px-2">
                 <input type="checkbox" name="" id="remember" />
                 <label
                   htmlFor="remember"
-                  className="text-[10px] poppins-regular px-1"
+                  className="text-[10px] poppins-regular px-1 hover:cursor-pointer"
                 >
                   Remember me
                 </label>
