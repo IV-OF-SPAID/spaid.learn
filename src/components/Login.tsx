@@ -156,7 +156,7 @@ const Login = () => {
                 <div className="w-full flex justify-end px-4">
                   <button
                     type="submit"
-                    className="text-sm p-1 poppins-regular w-30 rounded-md cursor-pointer border-1 border-[rgba(0,0,0,0.25)]"
+                    className="text-sm p-1 poppins-regular max-w-50 rounded-md cursor-pointer border-1 border-[rgba(0,0,0,0.25)]"
                   >
                     Create Account
                   </button>
