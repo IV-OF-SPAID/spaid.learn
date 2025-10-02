@@ -7,6 +7,9 @@ import supabase from "../config/supabaseClient";
 
 const Login = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
@@ -17,6 +20,39 @@ const Login = () => {
       },
     });
   };
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    const { data: users, error: fetchError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("email", email);
+
+    if (fetchError) {
+      setError("Error fetching user data");
+      return;
+    }
+
+    if (!users || users.length === 0) {
+      setError("No user found with this email");
+      return;
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      setError("Error signing in: " + signInError.message);
+      return;
+    }
+
+    navigate("/Home");
+  }
+  
   return (
     <>
       <div className="min-h-screen w-full flex justify-center items-center bg-white px-2 py-8">
