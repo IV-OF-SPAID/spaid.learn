@@ -1,10 +1,14 @@
-import React from "react";
+
 import Avatar from "../assets/img/defAvatar.svg";
 import ChevDown from "../assets/img/chevronD.svg";
 import { Link } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
 
-const Navlogged = ({ userData }) => {
+interface UserData {
+  name: string;
+}
+
+const Navlogged = ({ userData }: { userData: UserData | null}) => {
   return (
     <nav className=" w-full h-15 border-b-1 border-[rgba(0,0,0,0.25)] bg-white flex items-center pl-5 fixed z-50 ">
       <div className="flex w-2/4 ">

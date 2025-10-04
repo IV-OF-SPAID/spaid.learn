@@ -43,7 +43,15 @@ const MainLayout = () => {
 
   return (
     <>
-      <Navlogged userData={user?.id} />
+      <Navlogged
+        userData={
+          user
+            ? {
+                name: user.user_metadata?.full_name || "Unknown User",
+              }
+            : null
+        }
+      />
       <Outlet />
     </>
   );

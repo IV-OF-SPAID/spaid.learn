@@ -4,13 +4,63 @@ import Glogo from "../assets/img/gLogo.svg";
 import Flogo from "../assets/img/fLogo.svg";
 import supabase from "../config/supabaseClient";
 
-
 const Login = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
+  const [registerError, setRegisterError] = useState("");
   const navigate = useNavigate();
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRegisterError("");
+
+    if (
+      !/(?=.*[a.z])/.test(registerPassword) ||
+      !/(?=.*[A-Z])/.test(registerPassword) ||
+      !/(?=.*\d)/.test(registerPassword) ||
+      registerPassword.length < 8
+
+    ) {
+      setRegisterError(
+        "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, and one number"
+      );
+      return;
+    }
+
+    if (registerPassword !== registerConfirmPassword) {
+      setRegisterError("Passwords do not match");
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: registerEmail,
+      password: registerPassword,
+      options: {
+        data: { username: registerEmail },
+      },
+    });
+
+    if (error) {
+      setRegisterError(error.message);
+      return;
+    }
+
+    if (data.user) {
+      await supabase.from("profiles").insert([
+        {
+          id: data.user.id,
+          role: "student",
+          username: registerEmail
+        },
+      ]);
+    }
+    setIsVisible(false);
+  }
 
   const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
@@ -102,22 +152,23 @@ const Login = () => {
               <form
                 action=""
                 method="get"
+                onSubmit={handleEmailLogin}
                 className="w-full gap-2 flex flex-col"
               >
-                <h1 className="poppins-regular text-xs">Email Address: </h1>
+                <h1 className="poppins-regular text-xs">Email: </h1>
                 <input
                   type="email"
-                  name=""
-                  id=""
-                  placeholder="name@gmail.com"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                   className="w-full h-10 text-xs p-3 border-1 border-[rgba(0,0,0,0.25)] rounded-lg"
                 />
                 <h1 className="poppins-regular text-xs">Password: </h1>
                 <input
                   type="password"
-                  name=""
-                  id=""
-                  placeholder="**************"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
                   className="w-full h-10 text-xs p-3 border-1 border-[rgba(0,0,0,0.25)] rounded-lg"
                 />
                 <div className="flex items-center px-2">
@@ -129,6 +180,7 @@ const Login = () => {
                     Remember me
                   </label>
                 </div>
+                {error && <div className="text-red-500 text-xs">{error}</div>}
                 <div className="w-full flex justify-end px-4">
                   <button
                     type="submit"
@@ -173,36 +225,36 @@ const Login = () => {
                 <p className="text-xs mx-5 poppins-regular">or</p>
                 <hr className="flex-grow border-t border-gray-300"></hr>
               </div>
-              <form
+              <form onSubmit={handleRegister}
                 action=""
                 method="get"
                 className="w-full gap-2 flex flex-col"
               >
-                <h1 className="poppins-regular text-xs">Email Address: </h1>
+                <h1 className="poppins-regular text-xs">Email: </h1>
                 <input
-                  type="email"
-                  name=""
-                  id=""
-                  placeholder="name@gmail.com"
+                  type="text"
+                  placeholder="Enter your email"
+                  value={registerEmail}
+                  onChange={e => setRegisterEmail(e.target.value)}
                   className="w-full h-8 text-xs p-3 border-1 border-[rgba(0,0,0,0.25)] rounded-lg"
                 />
                 <h1 className="poppins-regular text-xs">Password: </h1>
                 <input
                   type="password"
-                  name=""
-                  id=""
-                  placeholder="**************"
+                  placeholder="Enter password"
+                  value={registerPassword}
+                  onChange={e => setRegisterPassword(e.target.value)}
                   className="w-full h-8 text-xs p-3 border-1 border-[rgba(0,0,0,0.25)] rounded-lg"
                 />
                 <h1 className="poppins-regular text-xs">Confirm Password: </h1>
                 <input
                   type="password"
-                  name=""
-                  id=""
-                  placeholder="**************"
+                  placeholder="Confirm password"
+                  value={registerConfirmPassword}
+                  onChange={e => setRegisterConfirmPassword(e.target.value)}
                   className="w-full h-8 text-xs p-3 border-1 border-[rgba(0,0,0,0.25)] rounded-lg"
                 />
-
+                {registerError && <div className="text-red-500 text-xs">{registerError}</div>}
                 <div className="w-full flex justify-end px-4">
                   <button
                     type="submit"
