@@ -5,7 +5,7 @@ import AccountSettCourses from "../components/AccountSettCourses";
 const AccountSettingPage = () => {
   return (
     <>
-      <AccountProf instructor={true} />
+      <AccountProf />
       <AccountSettCourses />
     </>
   );

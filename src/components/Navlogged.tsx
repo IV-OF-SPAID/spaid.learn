@@ -1,23 +1,40 @@
-
 import Avatar from "../assets/img/defAvatar.svg";
 import ChevDown from "../assets/img/chevronD.svg";
 import { Link } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
+import { useState, useEffect } from "react";
+import supabase from "../config/supabaseClient";
 
-interface UserData {
-  name: string;
-}
+const Navlogged = () => {
+  const [user, setUser] = useState<any>(null);
 
-const Navlogged = ({ userData }: { userData: UserData | null}) => {
+  useEffect(() => {
+    async function fetchUser() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    }
+    fetchUser();
+  }, []);
+
+  const [showMenu, setShowMenu] = useState(false);
   return (
     <nav className=" w-full h-15 border-b-1 border-[rgba(0,0,0,0.25)] bg-white flex items-center pl-5 fixed z-50 ">
       <div className="flex w-2/4 ">
-        <Link to="/Home" className="flex">
-          <h1 className="poppins-extrabold text-3xl text-[#ff0000]">SPAID</h1>
-          <h1 className="poppins-extrabold text-3xl text-[#ff8c00]">LEARN</h1>
-        </Link>
+        {user ? (
+          <Link to="/Home" className="flex">
+            <h1 className="poppins-extrabold text-3xl text-[#ff0000]">SPAID</h1>
+            <h1 className="poppins-extrabold text-3xl text-[#ff8c00]">LEARN</h1>
+          </Link>
+        ) : (
+          <div className="flex">
+            <h1 className="poppins-extrabold text-3xl text-[#ff0000]">SPAID</h1>
+            <h1 className="poppins-extrabold text-3xl text-[#ff8c00]">LEARN</h1>
+          </div>
+        )}
       </div>
-      {userData && (
+      {user && (
         <>
           <div className="w-2/4  h-full flex justify-end items-center">
             <Link to="/Courses" className="poppins-regular">
@@ -25,15 +42,16 @@ const Navlogged = ({ userData }: { userData: UserData | null}) => {
             </Link>
             <a
               href="#"
-              className=" h-11 w-35 rounded-xl bg-[#f5f5f5] flex px-3 justify-between items-center mx-8"
+              onClick={() => setShowMenu(!showMenu)}
+              className=" h-11 max-w-50 rounded-xl bg-[#f5f5f5] gap-2 flex px-3 justify-between items-center mx-8"
             >
               <img
-                src={Avatar}
+                src={user.user_metadata.avatar_url}
                 alt="profile"
                 className="w-8 h-8 bg-white rounded-full"
               />
               <div className="flex flex-col justify-center items-center">
-                <h1>Sid</h1>
+                <h1>{user.user_metadata.name.split(" ")[0]}</h1>
                 <p className="text-xs text-[#403F3F]">Learner</p>
               </div>
               <img src={ChevDown} alt="" className="w-3 h-3" />
@@ -41,7 +59,7 @@ const Navlogged = ({ userData }: { userData: UserData | null}) => {
           </div>
         </>
       )}
-      <DropdownMenu />
+      {showMenu && <DropdownMenu />}
     </nav>
   );
 };

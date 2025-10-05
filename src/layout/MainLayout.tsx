@@ -1,25 +1,31 @@
-import { data, Outlet, useNavigate } from "react-router-dom";
+import { data, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import Navlogged from "../components/Navlogged";
-import NavLogin from "../components/NavLogin";
 import type { User } from "@supabase/supabase-js";
 
 const MainLayout = () => {
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
       setUser(data.user);
 
       if (data.user) {
-        navigate("/Home");
+        // If logged in and not on /Home, redirect to /Home
+        if (location.pathname === "/") {
+          navigate("/Home", { replace: true });
+        }
       }
 
       if (!data.user) {
         setUser(null);
-        navigate("/");
+        // If not logged in and not on login page, redirect to login
+        if (location.pathname !== "/") {
+          navigate("/", { replace: true });
+        }
       }
 
       if (data.user) {
@@ -41,19 +47,11 @@ const MainLayout = () => {
         }
       }
     });
-  }, []);
+  }, [location.pathname]);
 
   return (
     <>
-      <Navlogged
-        userData={
-          user
-            ? {
-                name: user.user_metadata?.full_name || "Unknown User",
-              }
-            : null
-        }
-      />
+      <Navlogged />
       <Outlet />
     </>
   );

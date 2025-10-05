@@ -8,6 +8,7 @@ const DropdownMenu = () => {
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     navigate("/");
+    window.location.reload(); // Ensure all user state is cleared after sign out
   }
   return (
     <div className="absolute bg-white right-2 md:right-8 rounded-md border border-[rgba(0,0,0,0.25)] top-18  max-w-xs  shadow-lg z-50">

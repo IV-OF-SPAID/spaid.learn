@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatarcard from "../assets/img/defAvatar.svg";
 import { Link } from "react-router-dom";
+import supabase from "../config/supabaseClient";
 
 const LearnersCard = () => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    }
+    fetchUser();
+  }, []);
+
   return (
     <div className="w-full flex flex-col gap-6 items-center md:items-start md:mt-25 py-4 px-4 ">
       {/* Profile Card */}
@@ -13,12 +26,14 @@ const LearnersCard = () => {
             className="h-full flex flex-col justify-center items-center py-4"
           >
             <img
-              src={Avatarcard}
+              src={user?.user_metadata?.avatar_url || Avatarcard}
               alt=""
               className="w-20 bg-[#f5f5f5] rounded-full"
             />
             <div className="flex flex-col justify-center items-center mt-2">
-              <h1 className="text-lg">Sid</h1>
+              <h1 className="text-lg">
+                {user?.user_metadata?.full_name.split(" ")[0]}
+              </h1>
               <p className="text-xs text-[#403F3F] border-1 border-[rgba(0,0,0,0.25)] px-2 rounded-3xl">
                 Learner
               </p>
