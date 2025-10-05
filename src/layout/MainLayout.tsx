@@ -2,6 +2,7 @@ import { data, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import Navlogged from "../components/Navlogged";
+import NavLogin from "../components/NavLogin";
 import type { User } from "@supabase/supabase-js";
 
 const MainLayout = () => {
@@ -17,6 +18,7 @@ const MainLayout = () => {
       }
 
       if (!data.user) {
+        setUser(null);
         navigate("/");
       }
 
@@ -43,7 +45,8 @@ const MainLayout = () => {
 
   return (
     <>
-      <Navlogged userData={user?.id} />
+      {user ? <Navlogged userData={user?.id} /> : <NavLogin />}
+      {console.log(user)}
       <Outlet />
     </>
   );
