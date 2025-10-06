@@ -8,6 +8,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 const Login = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
@@ -16,12 +17,16 @@ const Login = () => {
   const [registerError, setRegisterError] = useState("");
   const navigate = useNavigate();
 
+  function generateRandomUsername() {
+    return "user" + Math.floor(Math.random() * 9000);
+  }
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegisterError("");
 
     if (
-      !/(?=.*[a.z])/.test(registerPassword) ||
+      !/(?=.*[a-z])/.test(registerPassword) ||
       !/(?=.*[A-Z])/.test(registerPassword) ||
       !/(?=.*\d)/.test(registerPassword) ||
       registerPassword.length < 8
@@ -37,11 +42,13 @@ const Login = () => {
       return;
     }
 
+    const randomUsername = generateRandomUsername();
+
     const { data, error } = await supabase.auth.signUp({
       email: registerEmail,
       password: registerPassword,
       options: {
-        data: { username: registerEmail },
+        data: { username: randomUsername, full_name: randomUsername },
       },
     });
 
@@ -55,7 +62,7 @@ const Login = () => {
         {
           id: data.user.id,
           role: "student",
-          username: registerEmail,
+          username: randomUsername,
         },
       ]);
     }
@@ -74,33 +81,30 @@ const Login = () => {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoginSuccess("");
 
-    const { data: users, error: fetchError } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("email", email);
-
-    if (fetchError) {
-      setError("Incorrect email or password");
-      return;
-    }
-
-    if (!users || users.length === 0) {
-      setError("Incorrect email or password");
-      return;
-    }
-
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (signInError) {
+    if (error) {
+    if (
+      error.message.toLowerCase().includes("confirm") ||
+      error.message.toLowerCase().includes("verify")
+    ) {
+      setLoginSuccess("Login successful! Please check your email to verify your account.");
+      setError("");
+    } else {
       setError("Incorrect email or password");
-      return;
     }
+    return;
+  }
 
-    navigate("/Home");
+
+    setTimeout(() => {
+      navigate("/Home");
+    }, 1500);
   };
 
   const [showPass, setShowPass] = useState(false);
@@ -136,7 +140,7 @@ const Login = () => {
                 <a
                   href="#"
                   onClick={handleGoogleLogin}
-                  className="w-auto h-10 rounded-md px-3 gap-1 border-1 border-[rgba(0,0,0,0.25)] flex justify-center items-center"
+                  className="w-auto h-8 rounded-md px-3 gap-1 border-1 border-[rgba(0,0,0,0.25)] flex justify-center items-center"
                 >
                   <img src={Glogo} alt="Google" className="w-5 h-5" />
                   <p className="text-xs">Continue with Google</p>
@@ -194,7 +198,10 @@ const Login = () => {
                   >
                     Remember me
                   </label>
-                </div>
+                </div>         
+                {loginSuccess && (
+                  <div className="text-green-600 text-xs">{loginSuccess}</div>
+                )}
                 {error && <div className="text-red-500 text-xs">{error}</div>}
                 <div className="w-full flex justify-end ">
                   <button
@@ -224,9 +231,9 @@ const Login = () => {
               <div className="w-full h-10 flex items-center justify-center gap-2 pt-2">
                 <a
                   href="#"
-                  className="w-auto h-10 rounded-md px-3 gap-1 border-1 border-[rgba(0,0,0,0.25)] flex justify-center items-center"
+                  className="w-auto h-8 rounded-md px-3 gap-1 border-1 border-[rgba(0,0,0,0.25)] flex justify-center items-center"
                 >
-                  <img src={Glogo} alt="Google" className="w-7 h-7" />
+                  <img src={Glogo} alt="Google" className="w-5 h-5" />
                   <p className="text-xs">Continue with Google</p>
                 </a>
               </div>

@@ -5,6 +5,7 @@ import supabase from "../config/supabaseClient";
 
 const LearnersCard = () => {
   const [user, setUser] = useState<any>(null);
+  const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
     async function fetchUser() {
@@ -12,6 +13,17 @@ const LearnersCard = () => {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .single();
+        if (profile?.username) {
+          setUsername(profile.username);
+        }
+      }
     }
     fetchUser();
   }, []);
@@ -32,7 +44,9 @@ const LearnersCard = () => {
             />
             <div className="flex flex-col justify-center items-center mt-2">
               <h1 className="text-lg">
-                {user?.user_metadata?.full_name.split(" ")[0]}
+                {user?.user_metadata?.full_name
+                  ? user.user_metadata.full_name.split(" ")[0]
+                  : username || "Learner"}
               </h1>
               <p className="text-xs text-[#403F3F] border-1 border-[rgba(0,0,0,0.25)] px-2 rounded-3xl">
                 Learner

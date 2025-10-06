@@ -51,7 +51,11 @@ const Navlogged = () => {
                 className="w-8 h-8 bg-white rounded-full"
               />
               <div className="flex flex-col justify-center items-center">
-                <h1>{user.user_metadata.name.split(" ")[0]}</h1>
+                <h1>
+                  {user.user_metadata?.name
+                    ? user.user_metadata.name.split(" ")[0]
+                    : "Learner"}
+                </h1>
                 <p className="text-xs text-[#403F3F]">Learner</p>
               </div>
               <img src={ChevDown} alt="" className="w-3 h-3" />

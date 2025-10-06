@@ -2,20 +2,25 @@ import React, { useEffect, useState } from "react";
 import Avatarcard from "../assets/img/defAvatar.svg";
 import { FaPencilAlt, FaCamera } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
-import { ScaleLoader } from "react-spinners";
+
 
 const AccountProf = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     async function fetchUser() {
       setLoading(true);
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        setUser(user);
+        if (user) {
+          const { data} = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("id", user.id)
+            .single();
+
+        }  
       } catch (error) {
         console.error("Error fetching user:", error);
       } finally {
@@ -38,9 +43,13 @@ const AccountProf = () => {
               alt="Pfp"
               className="w-[120px] rounded-full "
             />
-            <h1 className="text-2xl">Sid</h1>
+            <h1 className="text-2xl">
+              {user?.user_metadata?.full_name ||
+                user?.user_metadata?.name ||
+                username}
+            </h1>
             {user && (
-              <button className=" ml-10 flex bg-[#f5f5f5] w-30 justify-center items-center h-10 rounded-md cursor-pointer">
+              <button className=" ml-2 flex bg-[#f5f5f5] w-30 justify-center items-center h-10 rounded-md cursor-pointer">
                 Add Course
               </button>
             )}
