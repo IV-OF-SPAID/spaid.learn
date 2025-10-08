@@ -4,32 +4,10 @@ import { Link } from "react-router-dom";
 import supabase from "../config/supabaseClient";
 
 const LearnersCard = () => {
-  const [user, setUser] = useState<any>(null);
-  const [username, setUsername] = useState<string>("");
-
-  useEffect(() => {
-    async function fetchUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("id", user.id)
-          .single();
-        if (profile?.username) {
-          setUsername(profile.username);
-        }
-      }
-    }
-    fetchUser();
-  }, []);
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
   return (
-    <div className="w-full flex flex-col gap-6 items-center md:items-start md:mt-25 py-4 px-4 ">
+    <div className="w-full flex flex-col gap-6 items-center md:items-start md:mt-25 py-4 px-4 md:ml-[-100px] ">
       {/* Profile Card */}
       <div className="w-full  md:max-w-md hidden border-1 border-[rgba(0,0,0,0.25)] md:flex  overflow-hidden bg-white">
         <div className="w-2/5 flex flex-col border-r-1 border-[rgba(0,0,0,0.25)]">
@@ -38,15 +16,13 @@ const LearnersCard = () => {
             className="h-full flex flex-col justify-center items-center py-4"
           >
             <img
-              src={user?.user_metadata?.avatar_url || Avatarcard}
+              src={token?.user?.user_metadata?.avatar_url || Avatarcard}
               alt=""
               className="w-20 bg-[#f5f5f5] rounded-full"
             />
             <div className="flex flex-col justify-center items-center mt-2">
               <h1 className="text-lg">
-                {user?.user_metadata?.full_name
-                  ? user.user_metadata.full_name.split(" ")[0]
-                  : username || "Learner"}
+                {token?.user?.user_metadata?.full_name.split(" ")[0]}
               </h1>
               <p className="text-xs text-[#403F3F] border-1 border-[rgba(0,0,0,0.25)] px-2 rounded-3xl">
                 Learner

@@ -11,7 +11,7 @@ const HomePage = () => {
         <Review />
         <QrCom />
       </div>
-      <div className="w-full md:w-2/5 lg:w-1/3 flex justify-center items-start mt-8 md:mt-0">
+      <div className="w-full md:w-2/5 lg:w-1/3 flex justify-center   items-start mt-8 md:mt-0">
         <LearnersCard />
       </div>
     </div>

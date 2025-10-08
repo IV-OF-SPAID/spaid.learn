@@ -10,33 +10,42 @@ const MainLayout = () => {
   const location = useLocation();
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      setUser(data.user);
+    supabase.auth.getSession().then(async ({ data }) => {
+      const session = data?.session;
+      const user = session?.user || null;
+      setUser(user);
+
+      // Store session globally if logged in
+      if (session) {
+        sessionStorage.setItem("token", JSON.stringify(session));
+      } else {
+        sessionStorage.removeItem("token");
+      }
 
       // Redirect authenticated users from "/" to "/Home"
-      if (data.user && location.pathname === "/") {
+      if (user && location.pathname === "/") {
         navigate("/Home", { replace: true });
       }
 
       // Redirect unauthenticated users to "/" (login)
-      if (!data.user && location.pathname !== "/") {
+      if (!user && location.pathname !== "/") {
         setUser(null);
         navigate("/", { replace: true });
       }
 
       // Insert profile if not exists
-      if (data.user) {
+      if (user) {
         const { data: profile } = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", data.user.id)
+          .eq("id", user.id)
           .single();
 
         if (!profile) {
           await supabase.from("profiles").insert([
             {
-              id: data.user.id,
-              name: data.user.user_metadata.full_name,
+              id: user.id,
+              name: user.user_metadata.full_name,
               role: "student",
             },
           ]);

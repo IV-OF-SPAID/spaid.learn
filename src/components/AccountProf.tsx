@@ -1,34 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Avatarcard from "../assets/img/defAvatar.svg";
 import { FaPencilAlt, FaCamera } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
 
-
 const AccountProf = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    async function fetchUser() {
-      setLoading(true);
-      try {
-        if (user) {
-          const { data} = await supabase
-            .from("profiles")
-            .select("username")
-            .eq("id", user.id)
-            .single();
-
-        }  
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchUser();
-  }, []);
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
   return (
     <div className=" h-95 w-full px-30 py-20 relative">
@@ -39,16 +15,15 @@ const AccountProf = () => {
         <div className="absolute  bottom-[-90px] h-[120px]  w-full flex items-center">
           <div className="flex items-center  w-2/4 gap-5 pl-5 ">
             <img
-              src={user?.user_metadata?.avatar_url}
+              src={token?.user?.user_metadata?.avatar_url || Avatarcard}
               alt="Pfp"
               className="w-[120px] rounded-full "
             />
-            <h1 className="text-2xl">
-              {user?.user_metadata?.full_name ||
-                user?.user_metadata?.name ||
-                username}
+            <h1 className="text-2xl ">
+              {token?.user?.user_metadata?.username ||
+                token?.user?.user_metadata?.name}
             </h1>
-            {user && (
+            {token?.user?.user_metadata?.role === "instructor" && (
               <button className=" ml-2 flex bg-[#f5f5f5] w-30 justify-center items-center h-10 rounded-md cursor-pointer">
                 Add Course
               </button>

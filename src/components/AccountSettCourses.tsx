@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import supabase from "../config/supabaseClient";
 
 const AccountSettCourses = () => {
   return (

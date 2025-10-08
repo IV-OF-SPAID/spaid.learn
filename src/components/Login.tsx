@@ -5,7 +5,7 @@ import Flogo from "../assets/img/fLogo.svg";
 import supabase from "../config/supabaseClient";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-const Login = () => {
+const Login = ({ setToken }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [loginSuccess, setLoginSuccess] = useState("");
@@ -66,6 +66,10 @@ const Login = () => {
         },
       ]);
     }
+    // Clear registration fields after successful signup
+    setRegisterEmail("");
+    setRegisterPassword("");
+    setRegisterConfirmPassword("");
     setIsVisible(false);
   };
 
@@ -89,18 +93,22 @@ const Login = () => {
     });
 
     if (error) {
-    if (
-      error.message.toLowerCase().includes("confirm") ||
-      error.message.toLowerCase().includes("verify")
-    ) {
-      setLoginSuccess("Login successful! Please check your email to verify your account.");
-      setError("");
-    } else {
-      setError("Incorrect email or password");
+      if (
+        error.message.toLowerCase().includes("confirm") ||
+        error.message.toLowerCase().includes("verify")
+      ) {
+        setLoginSuccess(
+          "Login successful! Please check your email to verify your account."
+        );
+        setError("");
+      } else {
+        setError("Incorrect email or password");
+      }
+      return;
     }
-    return;
-  }
 
+    const { data } = await supabase.auth.getSession();
+    setToken(data);
 
     setTimeout(() => {
       navigate("/Home");
@@ -190,15 +198,22 @@ const Login = () => {
                     />
                   )}
                 </div>
-                <div className="flex items-center px-2">
-                  <input type="checkbox" name="" id="remember" />
-                  <label
-                    htmlFor="remember"
-                    className="text-[10px] poppins-regular px-1"
-                  >
-                    Remember me
-                  </label>
-                </div>         
+                <div className="flex items-center justify-between px-2 ">
+                  <div className="flex items-center">
+                    <input type="checkbox" name="" id="remember" />
+                    <label
+                      htmlFor="remember"
+                      className="text-[10px] poppins-regular px-1"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#013f5e] cursor-pointer hover:underline">
+                      forget password?
+                    </p>
+                  </div>
+                </div>
                 {loginSuccess && (
                   <div className="text-green-600 text-xs">{loginSuccess}</div>
                 )}

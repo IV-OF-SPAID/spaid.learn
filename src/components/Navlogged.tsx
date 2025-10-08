@@ -6,23 +6,13 @@ import { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
 
 const Navlogged = () => {
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    async function fetchUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-    }
-    fetchUser();
-  }, []);
+  const token = JSON.parse(sessionStorage.getItem("token"));
 
   const [showMenu, setShowMenu] = useState(false);
   return (
     <nav className=" w-full h-15 border-b-1 border-[rgba(0,0,0,0.25)] bg-white flex items-center pl-5 fixed z-50 ">
       <div className="flex w-2/4 ">
-        {user ? (
+        {token?.user ? (
           <Link to="/Home" className="flex">
             <h1 className="poppins-extrabold text-3xl text-[#ff0000]">SPAID</h1>
             <h1 className="poppins-extrabold text-3xl text-[#ff8c00]">LEARN</h1>
@@ -34,7 +24,7 @@ const Navlogged = () => {
           </div>
         )}
       </div>
-      {user && (
+      {token?.user && (
         <>
           <div className="w-2/4  h-full flex justify-end items-center">
             <Link to="/Courses" className="poppins-regular">
@@ -46,15 +36,15 @@ const Navlogged = () => {
               className=" h-11 max-w-50 rounded-xl bg-[#f5f5f5] gap-2 flex px-3 justify-between items-center mx-8"
             >
               <img
-                src={user.user_metadata.avatar_url}
+                src={token.user.user_metadata.avatar_url || Avatar}
                 alt="profile"
                 className="w-8 h-8 bg-white rounded-full"
               />
               <div className="flex flex-col justify-center items-center">
                 <h1>
-                  {user.user_metadata?.name
-                    ? user.user_metadata.name.split(" ")[0]
-                    : "Learner"}
+                  {token.user.user_metadata?.full_name
+                    ? token.user.user_metadata.full_name.split(" ")[0]
+                    : token.user.user_metadata?.full_name}
                 </h1>
                 <p className="text-xs text-[#403F3F]">Learner</p>
               </div>

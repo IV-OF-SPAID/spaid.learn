@@ -7,6 +7,7 @@ const DropdownMenu = () => {
   const navigate = useNavigate();
   async function signOut() {
     const { error } = await supabase.auth.signOut();
+    sessionStorage.removeItem("token");
     navigate("/");
     window.location.reload(); // Ensure all user state is cleared after sign out
   }
