@@ -19,9 +19,6 @@ const Navlogged = () => {
     if (showMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, [showMenu]);
 
   return (

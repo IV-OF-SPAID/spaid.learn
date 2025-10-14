@@ -15,24 +15,17 @@ const MainLayout = () => {
       const user = session?.user || null;
       setUser(user);
 
-      // Store session globally if logged in
       if (session) {
         sessionStorage.setItem("token", JSON.stringify(session));
       } else {
         sessionStorage.removeItem("token");
       }
-
-      // Redirect authenticated users from "/" to "/Home"
       if (user && location.pathname === "/") {
         navigate("/Home", { replace: true });
       }
-
-      // Prevent logged in users from accessing /reset
       if (user && location.pathname === "/reset") {
         navigate("/Home", { replace: true });
       }
-
-      // Redirect unauthenticated users to "/" (login)
       if (
         !user &&
         location.pathname !== "/" &&
@@ -41,8 +34,6 @@ const MainLayout = () => {
         setUser(null);
         navigate("/", { replace: true });
       }
-
-      // Insert profile if not exists
       if (user) {
         const { data: profile } = await supabase
           .from("profiles")

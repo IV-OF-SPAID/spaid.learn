@@ -4,12 +4,27 @@ import { Link } from "react-router-dom";
 import supabase from "../config/supabaseClient";
 
 const LearnersCard = () => {
-  const token = JSON.parse(sessionStorage.getItem("token"));
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedToken = sessionStorage.getItem("token");
+      if (storedToken) {
+        const parsedToken = JSON.parse(storedToken);
+        setToken(parsedToken);
+      } else {
+        console.warn("No token found in sessionStorage");
+      }
+    } catch (error) {
+      console.error("Error parsing token from sessionStorage:", error);
+      setToken(null);
+    }
+  }, []);
 
   return (
-    <div className="w-full flex flex-col gap-6 items-center md:items-start md:mt-25 py-4 px-4 md:ml-[-100px] ">
+    <div className="w-full  flex flex-col md:px-20 gap-6 items-center lg:items-start lg:mt-25 py-4  lg:ml-[-100px] ">
       {/* Profile Card */}
-      <div className="w-full  md:max-w-md hidden border-1 border-[rgba(0,0,0,0.25)] md:flex  overflow-hidden bg-white">
+      <div className="w-full  lg:max-w-md hidden border-1 border-[rgba(0,0,0,0.25)] md:flex  overflow-hidden bg-white">
         <div className="w-2/5 flex flex-col border-r-1 border-[rgba(0,0,0,0.25)]">
           <Link
             to="/AccountSetting"
@@ -46,7 +61,7 @@ const LearnersCard = () => {
       </div>
 
       {/* Continue Learning Card */}
-      <div className="w-full md:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex  overflow-hidden bg-white">
+      <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex  overflow-hidden bg-white">
         <div className="flex-1 flex flex-col p-5 gap-2">
           <h1 className="text-xs text-center border-1 border-[rgba(0,0,0,0.25)] rounded-full px-4 py-0.5 w-fit mx-auto md:mx-0">
             Continue Learning

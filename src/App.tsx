@@ -15,26 +15,12 @@ import ForgetPass from "./pages/ForgetPass";
 import PassRecover from "./pages/PassRecover";
 
 function App() {
-  const [token, setToken] = useState(false);
-
-  useEffect(() => {
-    const tokenString = sessionStorage.getItem("token");
-    if (tokenString) {
-      const data = JSON.parse(tokenString);
-      setToken(data);
-      console.log(token);
-    }
-  }, []);
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<Login setToken={setToken} />} />
-        <Route path="/Home" element={<HomePage token={token} />} />
-        <Route
-          path="/AccountSetting"
-          element={<AccountSettingPage token={token} />}
-        />
+        <Route index element={<Login />} />
+        <Route path="/Home" element={<HomePage />} />
+        <Route path="/AccountSetting" element={<AccountSettingPage />} />
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/reset" element={<ForgetPass />} />
         <Route path="/passRecover" element={<PassRecover />} />

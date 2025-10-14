@@ -5,7 +5,7 @@ import Flogo from "../assets/img/fLogo.svg";
 import supabase from "../config/supabaseClient";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-const Login = ({ setToken }) => {
+const Login = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [loginSuccess, setLoginSuccess] = useState("");
@@ -106,9 +106,6 @@ const Login = ({ setToken }) => {
       }
       return;
     }
-
-    const { data } = await supabase.auth.getSession();
-    setToken(data);
 
     setTimeout(() => {
       navigate("/Home");
