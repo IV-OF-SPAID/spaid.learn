@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Avatarcard from "../assets/img/defAvatar.svg";
 import { Link } from "react-router-dom";
+
 import supabase from "../config/supabaseClient";
 
 const LearnersCard = () => {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<any>(null);
 
   useEffect(() => {
     try {
