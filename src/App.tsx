@@ -28,8 +28,8 @@ function App() {
         <Route path="/reset" element={<ForgetPass />} />
         <Route path="/passRecover" element={<PassRecover />} />
         <Route path="/add-course" element={<AddCoursePage />} />
-        <Route path="/course" element={<CoursePage />} />
-        <Route path="/view-course" element={<ViewCoursePage />} />
+        <Route path="/course/:id" element={<CoursePage />} />
+        <Route path="/view-course/:id" element={<ViewCoursePage />} />
       </Route>
     )
   );

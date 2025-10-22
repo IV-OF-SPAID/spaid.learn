@@ -58,7 +58,7 @@ const Navlogged = () => {
     };
   }, []);
 
-  const username = profileState?.username ?? "User";
+  const username = profileState?.username || token?.user_metadata?.full_name;
   const role = profileState?.role ?? "Learner";
 
   return (
@@ -85,11 +85,15 @@ const Navlogged = () => {
             <button
               type="button"
               onClick={() => setShowMenu(!showMenu)}
-              className=" h-11 max-w-50 rounded-xl bg-[#f5f5f5] gap-2 flex px-3 justify-between items-center mx-8"
+              className=" h-11 max-w-50 rounded-xl bg-[#f5f5f5] cursor-pointer gap-2 flex px-3 justify-between items-center mx-8"
             >
               <img
                 // prefer avatar from stored profile, then auth metadata, then default
-                src={profileState?.avatar_url || Avatar}
+                src={
+                  profileState?.avatar_url ||
+                  token?.user?.user_metadata?.avatar_url ||
+                  Avatar
+                }
                 alt={profileState?.username ?? "profile"}
                 className="w-8 h-8 bg-white rounded-full object-cover"
               />

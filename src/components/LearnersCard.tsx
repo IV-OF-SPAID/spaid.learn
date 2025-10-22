@@ -99,9 +99,8 @@ const LearnersCard = () => {
     );
   }
 
-  const displayName = authUser?.user_metadata?.full_name
-    ? authUser.user_metadata.full_name.split(" ")[0]
-    : authUser?.user_metadata?.name ?? username ?? "Learner";
+  const displayName =
+    username || authUser.user_metadata.full_name.split(" ")[0];
 
   return (
     <div className="w-full lg:px-10 flex flex-col md:px-20 gap-6 items-center lg:items-start lg:mt-25 py-4  lg:ml-[-100px] ">
