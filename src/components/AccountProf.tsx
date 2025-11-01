@@ -30,7 +30,7 @@ const AccountProf = () => {
   const originalNameRef = useRef<string | null>(null);
   // file input ref for avatar upload
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  // local selected file and preview (do not upload until Save)
+  // local selected file and preview 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
