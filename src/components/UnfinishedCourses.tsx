@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { FaChevronDown } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
-import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const UnfinishedCourses: React.FC<{ user_id?: string | null }> = ({
   user_id,
@@ -18,10 +18,10 @@ const UnfinishedCourses: React.FC<{ user_id?: string | null }> = ({
           `
             progress,
             course_id (
-            id,
-            course_name
+              id,
+              course_name
             )
-        `
+          `
         )
         .eq("user_id", user_id)
         .lt("progress", 100);
@@ -55,15 +55,21 @@ const UnfinishedCourses: React.FC<{ user_id?: string | null }> = ({
               c?.course_name ||
               "Unknown Course";
 
-            return <p key={String(id)}>{name}</p>;
+            return (
+              <Link key={String(id)} to={`/course/${String(id)}`}>
+                {name}
+              </Link>
+            );
           })}
         </div>
       </div>
-      <div className="flex justify-end mt-3">
-        <button className="text-[#013F5E] flex items-center gap-2 hover:underline cursor-pointer">
-          Show more <FaChevronDown />
-        </button>
-      </div>
+      {courses.length > 3 && !loading && (
+        <div className="flex justify-end mt-3">
+          <button className="text-[#013F5E] flex items-center gap-2 hover:underline cursor-pointer">
+            Show more <FaChevronDown />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

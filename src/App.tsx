@@ -16,6 +16,7 @@ import PassRecover from "./pages/PassRecover";
 import AddCoursePage from "./pages/AddCoursePage";
 import CoursePage from "./pages/CoursePage";
 import ViewCoursePage from "./pages/ViewCoursePage";
+import EditCourse from "./pages/EditCourse";
 
 function App() {
   const router = createBrowserRouter(
@@ -30,6 +31,7 @@ function App() {
         <Route path="/add-course" element={<AddCoursePage />} />
         <Route path="/course/:id" element={<CoursePage />} />
         <Route path="/view-course/:id" element={<ViewCoursePage />} />
+        <Route path="/edit-course/:id" element={<EditCourse />} />
       </Route>
     )
   );

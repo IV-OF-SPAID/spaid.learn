@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
+import { Link } from "react-router";
 
 type Course = {
   id: string;
@@ -87,13 +88,15 @@ const MyCourses: React.FC<{ uploader_id?: string | null }> = ({
             </p>
           ) : (
             courses.map((c) => (
-              <p key={c.id}>{c.course_name ?? "Untitled course"}</p>
+              <Link key={c.id} to={`/course/${c.id}`}>
+                {c.course_name ?? "Untitled course"}
+              </Link>
             ))
           )}
         </div>
       </div>
       <div className="flex justify-end mt-3">
-        {courses.length > 0 && (
+        {courses.length > 3 && (
           <button className="text-[#013F5E] flex items-center gap-2 hover:underline cursor-pointer">
             Show more <FaChevronDown />
           </button>

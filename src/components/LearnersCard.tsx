@@ -3,6 +3,7 @@ import Avatarcard from "../assets/img/defAvatar.svg";
 import { Link } from "react-router-dom";
 
 import supabase from "../config/supabaseClient";
+import ContinueLearning from "./ContinueLearning";
 
 const LearnersCard = () => {
   const [authUser, setAuthUser] = useState<any>(null);
@@ -15,7 +16,70 @@ const LearnersCard = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   // loading state for skeleton
-  const [loading, setLoading] = useState<boolean>(true);
+
+  const [unfinishedCourses, setUnfinishedCourses] = useState<any[]>([]);
+  const [finishedCourses, setFinishedCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFinishedCourses = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("user_courses")
+        .select(
+          `
+            progress,
+            course_id (
+            id,
+            course_name
+            )
+        `
+        )
+        .eq("user_id", authUser?.id)
+        .eq("progress", 100);
+
+      if (error) {
+        console.error("Error fetching finished courses:", error);
+      } else {
+        setFinishedCourses(data || []);
+      }
+      setLoading(false);
+    };
+
+    if (authUser?.id) {
+      fetchFinishedCourses();
+    }
+  }, [authUser?.id]);
+
+  useEffect(() => {
+    const fetchUnfinishedCourses = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("user_courses")
+        .select(
+          `
+            progress,
+            course_id (
+            id,
+            course_name
+            )
+        `
+        )
+        .eq("user_id", authUser?.id)
+        .lt("progress", 100);
+
+      if (error) {
+        console.error("Error fetching unfinished courses:", error);
+      } else {
+        setUnfinishedCourses(data || []);
+      }
+      setLoading(false);
+    };
+
+    if (authUser?.id) {
+      fetchUnfinishedCourses();
+    }
+  }, [authUser?.id]);
 
   useEffect(() => {
     let mounted = true;
@@ -132,35 +196,20 @@ const LearnersCard = () => {
         <div className="w-3/5 bg-[#f5f5f5] flex flex-col justify-between items-center py-4">
           <div className="w-full flex flex-col justify-center px-4">
             <h1 className="text-[#403F3F]">Courses Completed</h1>
-            <h1 className="text-xl">0</h1>
+            <h1 className="text-xl">{finishedCourses.length}</h1>
           </div>
           <div className="flex items-center w-4/5 py-3">
             <hr className="flex-grow border-t border-gray-300"></hr>
           </div>
           <div className="w-full flex flex-col justify-center px-4">
             <h1 className="text-[#403F3F]">Ongoing Courses</h1>
-            <h1 className="text-xl">0</h1>
+            <h1 className="text-xl">{unfinishedCourses.length}</h1>
           </div>
         </div>
       </div>
 
       {/* Continue Learning Card */}
-      <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex  overflow-hidden bg-white">
-        <div className="flex-1 flex flex-col p-5 gap-2">
-          <h1 className="text-xs text-center border-1 border-[rgba(0,0,0,0.25)] rounded-full px-4 py-0.5 w-fit mx-auto md:mx-0">
-            Continue Learning
-          </h1>
-          <h1 className="text-base font-semibold">
-            MATHEMATICAL AND PROBLEM-SOLVING SKILLS II
-          </h1>
-          <p className="text-xs text-gray-600">25% Completed</p>
-        </div>
-        <div className="flex justify-center items-end p-4">
-          <a href="#" className="text-[#013F5E] font-medium">
-            View Course
-          </a>
-        </div>
-      </div>
+      <ContinueLearning user_id={authUser?.id} />
     </div>
   );
 };

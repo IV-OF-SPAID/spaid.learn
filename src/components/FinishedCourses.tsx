@@ -1,6 +1,7 @@
 import React from "react";
 import { FaChevronDown } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
+import { Link } from "react-router";
 
 const FinishedCourses: React.FC<{ user_id?: string | null }> = ({
   user_id,
@@ -55,15 +56,21 @@ const FinishedCourses: React.FC<{ user_id?: string | null }> = ({
               c?.course_name ||
               "Unknown Course";
 
-            return <p key={String(id)}>{name}</p>;
+            return (
+              <Link key={String(id)} to={`/course/${courseObj.id}`}>
+                {name}
+              </Link>
+            );
           })}
         </div>
       </div>
-      <div className="flex justify-end mt-3">
-        <button className="text-[#013F5E] flex items-center gap-2 hover:underline cursor-pointer">
-          Show more <FaChevronDown />
-        </button>
-      </div>
+      {courses.length > 3 && !loading && (
+        <div className="flex justify-end mt-3">
+          <button className="text-[#013F5E] flex items-center gap-2 hover:underline cursor-pointer">
+            Show more <FaChevronDown />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -4,7 +4,6 @@ interface Course {
   id?: string;
   course_name?: string | null;
   course_url?: string | null;
-
 }
 
 interface Props {
@@ -32,7 +31,9 @@ const CourseContentCard: React.FC<Props> = ({ course }) => {
     );
   }
 
-  return <embed className="overflow-hidden" src={course.course_url} type="application/pdf" />;
+  return (
+    <embed className="w-full" src={course.course_url} type="application/pdf" />
+  );
 };
 
 export default CourseContentCard;

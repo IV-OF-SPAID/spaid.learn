@@ -66,7 +66,16 @@ const MainLayout = () => {
 
     (async () => {
       const { data } = await supabase.auth.getSession();
-      const authUser = data?.session?.user ?? null;
+      const session = data?.session ?? null;
+      const authUser = session?.user ?? null;
+
+      // Added: store session token immediately (no delay)
+      if (session) {
+        sessionStorage.setItem("token", JSON.stringify(session));
+      } else {
+        sessionStorage.removeItem("token");
+      }
+
       setUser(authUser);
 
       if (authUser) {
@@ -140,12 +149,15 @@ const MainLayout = () => {
     // Listen for auth changes and set/remove token when user signs in/out
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (event === "SIGNED_IN") {
-          // Store only the access_token in sessionStorage
-          if (session?.access_token) {
+        // Extended: include TOKEN_REFRESHED and USER_UPDATED
+        if (
+          event === "SIGNED_IN" ||
+          event === "TOKEN_REFRESHED" ||
+          event === "USER_UPDATED"
+        ) {
+          if (session) {
             sessionStorage.setItem("token", JSON.stringify(session));
           }
-
           // fetch and store profile for the signed-in user
           (async () => {
             const userId = session?.user?.id;

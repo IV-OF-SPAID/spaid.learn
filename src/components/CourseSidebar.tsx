@@ -1,53 +1,54 @@
 import { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 
-const CourseSidebar = ({ course }: { course: any }) => {
+const CourseSidebar = ({ courseId }: { courseId: string | number }) => {
   const [uploaderName, setUploaderName] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    let mounted = true;
+    let active = true;
     (async () => {
+      setLoading(true);
       try {
-        if (!course) {
-          // fallback to current authenticated user name
-          const { data } = await supabase.auth.getUser();
-          const user = data?.user ?? null;
-          if (!mounted) return;
+        // fetch course to get uploader_id
+        const { data: courseRow, error: courseErr } = await supabase
+          .from("course_id")
+          .select("uploader_id")
+          .eq("id", courseId)
+          .single();
+        if (courseErr) throw courseErr;
+        const uploaderId = courseRow?.uploader_id;
+        if (!uploaderId) {
+          if (active) setUploaderName("Unknown uploader");
           return;
         }
-
-        const { data: profile, error } = await supabase
+        const { data: profile, error: profileErr } = await supabase
           .from("profiles")
           .select("username")
-          .eq("id", course.uploader_id)
-          .maybeSingle();
-
-        if (!mounted) return;
-
-        if (!error && profile?.username) {
-          setUploaderName(profile.username);
+          .eq("id", uploaderId)
+          .single();
+        if (profileErr || !profile?.username) {
+          if (active) setUploaderName("Unknown uploader");
         } else {
-          // fallback to fetching auth user name if profile not found
-          const { data } = await supabase.auth.getUser();
-          const user = data?.user ?? null;
-          const display = uploaderName;
-          ("Unknown uploader");
-          setUploaderName(display);
+          if (active) setUploaderName(profile.username);
         }
-      } catch (err) {
-        if (mounted) setUploaderName("Unknown uploader");
+      } catch {
+        if (active) setUploaderName("Unknown uploader");
+      } finally {
+        if (active) setLoading(false);
       }
     })();
     return () => {
-      mounted = false;
+      active = false;
     };
-  }, [course]);
+  }, [courseId]);
 
   return (
     <>
       <div className="border-1 border-[rgba(0,0,0,0.25)]  p-5 mb-2">
         <div className="text-gray-500 text-sm mb-1">Uploaded By</div>
         <div className="text-sm text-black">
-          {uploaderName || "Unknown uploader"}
+          {loading ? "Loading..." : uploaderName || "Unknown uploader"}
         </div>
       </div>
       <div className="border-1 border-[rgba(0,0,0,0.25)]  p-5">
@@ -65,4 +66,3 @@ const CourseSidebar = ({ course }: { course: any }) => {
 };
 
 export default CourseSidebar;
-// ...existing code...

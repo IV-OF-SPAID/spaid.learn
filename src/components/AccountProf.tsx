@@ -30,7 +30,7 @@ const AccountProf = () => {
   const originalNameRef = useRef<string | null>(null);
   // file input ref for avatar upload
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  // local selected file and preview 
+  // local selected file and preview
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -415,7 +415,7 @@ const AccountProf = () => {
                 <h1 className="md:text-2xl text-xl px-3">{displayName}</h1>
               ) : (
                 <input
-                  className="md:text-2xl text-xl  px-3 bg-[#f5f5f5]"
+                  className="md:text-2xl text-xl  px-3 border-b-1 focus:outline-none"
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
                   disabled={saving}
@@ -423,7 +423,7 @@ const AccountProf = () => {
                 />
               )}
 
-              {role === "instructor" && (
+              {role === "instructor" && !editing && (
                 <Link
                   to="/add-course"
                   className=" ml-2 flex bg-[#f5f5f5] w-30 justify-center items-center h-10 rounded-md cursor-pointer"
