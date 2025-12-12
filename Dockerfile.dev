@@ -8,8 +8,11 @@ RUN npm install
 
 COPY . .
 
+# Copy the correct PDF worker file
 RUN mkdir -p public
-RUN cp node_modules/pdfjs-dist/build/pdf.worker.mjs public/pdf.worker.mjs 2>/dev/null || echo "Will copy worker manually"
+RUN cp node_modules/pdfjs-dist/build/pdf.worker.min.mjs public/pdf.worker.min.mjs 2>/dev/null || \
+    cp node_modules/pdfjs-dist/build/pdf.worker.mjs public/pdf.worker.mjs 2>/dev/null || \
+    echo "Worker file not found"
 
 EXPOSE 5174
 
