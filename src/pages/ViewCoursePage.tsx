@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from "react";
-import CourseOverviewCard from "../components/CourseOverviewCard";
+import React, { useEffect, useState } from "react";
 import CourseContentCard from "../components/CourseContentCard";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
+import { parseAndPaginateContent, ParsedPage } from "../utils/contentParser";
 
 type Course = {
-  id: number;
+  id: string;
   course_name: string;
   course_description: string;
   course_url?: string | null;
-  // ...other columns...
+  course_content?: string | null;
 };
 
 const ViewCoursePage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
-  const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Pagination state
+  const [pages, setPages] = useState<ParsedPage[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (!id) {
-      setError("No course id provided in URL.");
+      setError("No course ID provided in URL.");
       setLoading(false);
       return;
     }
-
-    const idNum = Number(id);
-    const eqId = Number.isNaN(idNum) ? id : idNum;
 
     let cancelled = false;
     const fetchCourse = async () => {
@@ -38,11 +38,20 @@ const ViewCoursePage: React.FC = () => {
         const { data, error } = await supabase
           .from("course_id")
           .select("*")
-          .eq("id", eqId)
+          .eq("id", id)
           .single();
 
         if (error) throw error;
-        if (!cancelled) setCourse(data as Course);
+        if (!cancelled) {
+          setCourse(data as Course);
+          
+          // Parse and paginate the course content
+          if (data.course_content) {
+            const paginatedPages = parseAndPaginateContent(data.course_content, 2000);
+            setPages(paginatedPages);
+            setCurrentPage(1);
+          }
+        }
       } catch (e: any) {
         if (!cancelled) setError(e?.message ?? String(e));
       } finally {
@@ -56,30 +65,46 @@ const ViewCoursePage: React.FC = () => {
     };
   }, [id]);
 
-  const handleBack = () => {
-    if (window.history.length > 1) navigate(-1);
-    else navigate("/Home");
+  const handleNextPage = () => {
+    if (currentPage < pages.length) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  if (loading) return <div className="p-4 pt-50">Loading course...</div>;
-  if (error)
-    return <div className="p-4 pt-50 text-red-600">Error: {error}</div>;
-  if (!course) return <div className="p-4 pt-50">Course not found.</div>;
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  if (loading) return <div className="p-4 pt-20">Loading course...</div>;
+  if (error) return <div className="p-4 pt-20 text-red-600">Error: {error}</div>;
+  if (!course) return <div className="p-4 pt-20">Course not found.</div>;
+
+  const currentPageContent = pages.find(p => p.pageNumber === currentPage);
 
   return (
-    <div className="bg-white min-h-screen p-15 flex flex-col">
-      <button
-        type="button"
-        onClick={handleBack}
-        className="absolute top-22 cursor-pointer left-15 text-[rgba(0,0,0,0.25)] flex justify-center items-center gap-2"
+    <div className="bg-white min-h-screen pt-16 px-8 pb-8">
+      {/* Breadcrumb */}
+      <Link
+        to="/Courses"
+        className="text-[rgba(0,0,0,0.25)] flex items-center gap-1 text-xs mb-4"
       >
-        <FaChevronLeft />
-        <span>Learn / Courses / {course?.course_name}</span>
-      </button>
-      <div className="flex-1 flex flex-col md:flex-row gap-4 mt-20 items-stretch">
-        <CourseOverviewCard course={course} />
-        <CourseContentCard course={course} />
-      </div>
+        <FaChevronLeft size={10} />
+        Learn / Courses / {course?.course_name}
+      </Link>
+      
+      {/* Content */}
+      <CourseContentCard 
+        course={course}
+        content={currentPageContent?.content || course.course_content || "No content available"}
+        currentPage={currentPage}
+        totalPages={pages.length || 1}
+        onNextPage={handleNextPage}
+        onPrevPage={handlePrevPage}
+      />
     </div>
   );
 };
