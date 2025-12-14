@@ -10,7 +10,7 @@ const CoursePage = () => {
   if (!id) return <div className="p-4">No course id provided.</div>;
 
   return (
-    <div className="bg-white  min-h-screen px-10 md:px-25 pt-30 py-6">
+    <div className="bg-[#f8f8f8]  min-h-screen px-10 md:px-25 pt-30 py-6">
       <Link
         to="/Home"
         className="absolute top-20 left-15 text-[rgba(0,0,0,0.25)] flex justify-center items-center gap-2"

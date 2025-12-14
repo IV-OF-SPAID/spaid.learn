@@ -169,7 +169,7 @@ const LearnersCard = () => {
   return (
     <div className="w-full lg:px-10 flex flex-col md:px-20 gap-6 items-center lg:items-start lg:mt-25 py-4  lg:ml-[-100px] ">
       {/* Profile Card */}
-      <div className="w-full  lg:max-w-md hidden border-1 border-[rgba(0,0,0,0.25)] md:flex  overflow-hidden bg-white">
+      <div className="w-full  lg:max-w-md hidden md:flex  overflow-hidden bg-white">
         <div className="w-2/5 flex flex-col border-r-1 border-[rgba(0,0,0,0.25)]">
           <Link
             to="/AccountSetting"
@@ -187,7 +187,7 @@ const LearnersCard = () => {
             />
             <div className="flex flex-col justify-center items-center mt-2">
               <h1 className="text-lg">{displayName}</h1>
-              <p className="text-xs text-[#403F3F] border-1 border-[rgba(0,0,0,0.25)] px-2 rounded-3xl">
+              <p className="text-xs border-1  px-2 rounded-3xl bg-[#ff0300] text-white">
                 {role}
               </p>
             </div>

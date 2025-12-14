@@ -74,18 +74,22 @@ const AccountSettCourses: React.FC = () => {
 
   return (
     <div className="p-8 md:px-15 lg:px-30">
-      <div className="w-full gap-5 md:gap-10  flex flex-col md:flex-row justify-between bg-[#f5f5f5] rounded-xl md:p-5">
+      <div className="w-full gap-5 md:gap-10  flex flex-col justify-between rounded-xl md:p-5">
         {role === "instructor" && <MyCourses uploader_id={userId} />}
 
         {role === "instructor" && (
           <div className="block h-[1px] md:h-auto md:my-5 md:w-[2px] bg-gray-300 mx-2"></div>
         )}
 
-        <UnfinishedCourses user_id={userId} />
+        {role == "student" && (
+          <div>
+            <UnfinishedCourses user_id={userId} />
 
-        <div className="block h-[1px] md:h-auto md:my-5 md:w-[2px] bg-gray-300 mx-2"></div>
+            <div className="block h-[1px] md:h-auto md:my-5 md:w-[2px] bg-gray-300 mx-2"></div>
 
-        <FinishedCourses user_id={userId} />
+            <FinishedCourses user_id={userId} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -59,7 +59,7 @@ const CourseContentCard: React.FC<Props> = ({
             >
               <FaChevronLeft />
             </button>
-            <h2 className="text-sm font-semibold uppercase">
+            <h2 className="text-sm font-semibold uppercase bg-[#ff0300] text-white px-3 py-1 rounded-full">
               {course.course_name}
             </h2>
             <button

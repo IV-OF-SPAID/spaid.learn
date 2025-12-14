@@ -138,7 +138,7 @@ const AddCoursePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f8f8f8]">
       {/* top-center upload complete toast */}
       {showToast && (
         <div

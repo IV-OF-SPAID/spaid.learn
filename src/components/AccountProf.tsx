@@ -423,10 +423,10 @@ const AccountProf = () => {
                 />
               )}
 
-              {role === "instructor" && !editing && (
+              {role != "student" && !editing && (
                 <Link
                   to="/add-course"
-                  className=" ml-2 flex bg-[#f5f5f5] w-30 justify-center items-center h-10 rounded-md cursor-pointer"
+                  className=" ml-2 flex bg-[#ff9801] w-30 justify-center items-center h-8 rounded cursor-pointer "
                 >
                   Add Course
                 </Link>
@@ -438,7 +438,7 @@ const AccountProf = () => {
                   tabIndex={0}
                   title="Change avatar"
                   aria-disabled={false}
-                  className="absolute bottom-0 w-fit left-27 text-5xl p-2  cursor-pointer text-[#989898]"
+                  className="absolute bottom-0 w-fit left-27 text-5xl p-2  cursor-pointer text-[#ff9801]"
                 />
               )}
               {/* <FaCamera className="text-[#989898] text-3xl absolute bottom-5 left-25 md:bottom-0 md:left-27" /> */}
@@ -448,7 +448,7 @@ const AccountProf = () => {
               {!editing ? (
                 <button
                   onClick={handleStartEdit}
-                  className="ml-4 flex items-center gap-2 bg-[#f5f5f5] px-3 py-2 rounded"
+                  className="ml-4 flex items-center gap-2 bg-[#ff9801] px-3 h-8 rounded cursor-pointer"
                 >
                   <FaPencilAlt />
                   Edit Profile
@@ -458,14 +458,14 @@ const AccountProf = () => {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center gap-2 bg-[#f5f5f5] px-3 py-2 rounded"
+                    className="flex items-center gap-2 bg-[#ff9801] cursor-pointer px-3 h-8 rounded"
                   >
                     {saving ? "Saving..." : "Save"}
                   </button>
                   <button
                     onClick={handleCancel}
                     disabled={saving}
-                    className="flex items-center gap-2 bg-white border px-3 py-2 rounded"
+                    className="flex items-center gap-2 bg-[#ff0300] cursor-pointer px-3 h-8 rounded"
                   >
                     Cancel
                   </button>

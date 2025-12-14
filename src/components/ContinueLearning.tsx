@@ -41,9 +41,9 @@ const ContinueLearning: React.FC<ContinueLearningProps> = ({ user_id }) => {
   }, [user_id]);
 
   return (
-    <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex overflow-hidden bg-white">
+    <div className="w-full lg:max-w-md flex overflow-hidden bg-white">
       <div className="flex-1 flex flex-col p-5 gap-2">
-        <h1 className="text-xs text-center border-1 border-[rgba(0,0,0,0.25)] rounded-full px-4 py-0.5 w-fit mx-auto md:mx-0">
+        <h1 className="text-xs text-center border-1 bg-[#ff0300] rounded-full px-4 py-0.5 w-fit mx-auto md:mx-0 text-white">
           Continue Learning
         </h1>
         <h1 className="text-base font-semibold">

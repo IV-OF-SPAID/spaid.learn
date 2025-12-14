@@ -5,7 +5,7 @@ import LearnersCard from "../components/LearnersCard";
 
 const HomePage = () => {
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-screen">
+    <div className="flex flex-col lg:flex-row w-full min-h-screen bg-[#f8f8f8]">
       <div className="w-full  lg:w-2/3 flex flex-col ">
         <RecoCourse />
         <Review />

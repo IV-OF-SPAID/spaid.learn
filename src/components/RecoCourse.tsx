@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import supabase from "../config/supabaseClient";
+import pallete from "../assets/img/pallete.png";
 
 type Course = {
   id: number;
@@ -46,15 +47,16 @@ const RecoCourse = () => {
   }, []);
 
   return (
-    <div className="w-full flex flex-col px-4 md:px-20 pt-8 md:pt-18 gap-5">
-      <h1 className="text-lg">Learn</h1>
-
+    <div className="w-full flex flex-col px-4 md:px-20 pt-8 md:pt-28 gap-5 ">
       {loading ? (
         <div className="w-full max-w-[880px] h-auto md:h-[170px] bg-[#f5f5f5] rounded-2xl p-4 flex items-center justify-center mx-auto">
           <span className="text-sm text-gray-600">Loading...</span>
         </div>
       ) : (
-        <div className="w-full max-w-[880px] h-auto md:h-[170px] bg-[#f5f5f5] rounded-2xl p-4 flex flex-col justify-center mx-auto">
+        // bg-gradient-to-br from-[#ff9801] via-[#ff9801] to-[#ff0300]
+        <div
+          className={`w-full max-w-[880px] h-auto md:h-[170px] bg-[#f5f5f5] rounded-2xl p-4 flex flex-col justify-center mx-auto bg-[url('../../public/pallete.png')]  bg-cover bg-center`}
+        >
           <h1 className="text-[#403F3F]">Recommended Course</h1>
 
           {error ? (
@@ -69,7 +71,7 @@ const RecoCourse = () => {
                 <Link
                   to={`/course/${recommended.id}`}
                   state={{ course: recommended }}
-                  className="bg-white w-full md:w-50 h-10 border-1 border-[rgba(0,0,0,0.25)] flex justify-center items-center rounded-xl cursor-pointer mt-2 md:mt-0"
+                  className=" w-full md:w-50 h-10  flex justify-center items-center rounded-xl cursor-pointer mt-2 md:mt-0 bg-[#ff9801]"
                 >
                   Start Learning Now
                 </Link>

@@ -1,6 +1,6 @@
 import Avatar from "../assets/img/defAvatar.svg";
 import ChevDown from "../assets/img/chevronD.svg";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
 import { useState, useEffect, useRef } from "react";
 
@@ -22,6 +22,7 @@ const Navlogged = () => {
   });
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const location = useLocation();
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -117,9 +118,28 @@ const Navlogged = () => {
       </div>
       {profileState && (
         <div className="w-2/4  h-full flex justify-end items-center">
-          <Link to="/Courses" className="poppins-regular">
-            Courses
-          </Link>
+          <div className="flex gap-1 p-1 bg-[#f5f5f5] rounded-full">
+            <Link
+              to="/Home"
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                location.pathname === "/Home"
+                  ? "bg-[#ff9801] text-white"
+                  : "text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              to="/Courses"
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                location.pathname === "/Courses"
+                  ? "bg-[#ff9801] text-white"
+                  : "text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Learn
+            </Link>
+          </div>
           <button
             type="button"
             onClick={() => setShowMenu(!showMenu)}
