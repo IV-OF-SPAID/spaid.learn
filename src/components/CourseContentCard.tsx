@@ -1,8 +1,6 @@
 import React from "react";
 import CourseContentOverview from "./CourseContentOverview";
 import CourseQuestion from "./CourseContentQuestion";
-import { FaChevronLeft } from "react-icons/fa";
-import { FaChevronRight } from "react-icons/fa";
 
 interface Course {
   id?: string;
@@ -39,7 +37,7 @@ const CourseContentCard: React.FC<Props> = ({
   }
 
   return (
-    <div className="w-full h-[80vh] flex flex-row items-start gap-4 ">
+    <div className="w-full flex flex-row items-start gap-4">
       {/* Left column - Course Overview */}
       <CourseContentOverview
         courseName={course.course_name}
@@ -47,28 +45,28 @@ const CourseContentCard: React.FC<Props> = ({
       />
 
       {/* Right column - Content and Question */}
-      <div className="flex-1 flex flex-col gap-4 h-full">
+      <div className="flex-1 flex flex-col gap-4">
         {/* Content panel */}
-        <div className="border border-[rgba(0,0,0,0.25)] h-[50%] rounded-lg p-4">
+        <div className="border border-[rgba(0,0,0,0.25)] rounded-lg p-4">
           <div className="flex items-center justify-center gap-2 mb-3">
             <button
               onClick={onPrevPage}
               disabled={currentPage === 1}
-              className="text-md hover:bg-gray-100 px-1 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+              className="text-sm hover:bg-gray-100 px-1 rounded disabled:opacity-30 disabled:cursor-not-allowed"
               type="button"
             >
-              <FaChevronLeft />
+              ‹
             </button>
-            <h2 className="text-sm font-semibold uppercase bg-[#ff0300] text-white px-3 py-1 rounded-full">
+            <h2 className="text-sm font-semibold uppercase">
               {course.course_name}
             </h2>
             <button
               onClick={onNextPage}
               disabled={currentPage === totalPages}
-              className="text-md hover:bg-gray-100 px-1 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+              className="text-sm hover:bg-gray-100 px-1 rounded disabled:opacity-30 disabled:cursor-not-allowed"
               type="button"
             >
-              <FaChevronRight />
+              ›
             </button>
           </div>
           <p className="text-xs text-black leading-relaxed">{content}</p>

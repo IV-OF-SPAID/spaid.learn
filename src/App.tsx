@@ -36,6 +36,7 @@ function App() {
         <Route path="/edit-course/:id" element={<EditCourse />} />
         <Route path="/Courses" element={<CourseNav />} />
         <Route path="/start-quiz" element={<StartQuiz />} />
+        <Route path="/start-quiz/:id" element={<StartQuiz />} />
       </Route>
     )
   );
