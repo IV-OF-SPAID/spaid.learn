@@ -1,6 +1,7 @@
 import React from "react";
 import CourseContentOverview from "./CourseContentOverview";
-import CourseQuestion from "./CourseContentQuestion";
+import CourseContentQuestion from "./CourseContentQuestion";
+// ...existing code...
 
 interface Course {
   id?: string;
@@ -46,9 +47,9 @@ const CourseContentCard: React.FC<Props> = ({
 
       {/* Right column - Content and Question */}
       <div className="flex-1 flex flex-col gap-4">
-        {/* Content panel */}
-        <div className="border border-[rgba(0,0,0,0.25)] rounded-lg p-4">
-          <div className="flex items-center justify-center gap-2 mb-3">
+        {/* Content panel - fixed height with scroll */}
+        <div className="border border-[rgba(0,0,0,0.25)] rounded-lg p-4 h-[300px] overflow-y-auto">
+          <div className="flex items-center justify-center gap-2 mb-3 sticky top-0 bg-white pb-2">
             <button
               onClick={onPrevPage}
               disabled={currentPage === 1}
@@ -72,8 +73,12 @@ const CourseContentCard: React.FC<Props> = ({
           <p className="text-xs text-black leading-relaxed">{content}</p>
         </div>
 
-        {/* Question panel */}
-        <CourseQuestion />
+        {/* Question panel - dynamically generated based on content */}
+        <CourseContentQuestion
+          content={content}
+          pageNumber={currentPage}
+          onCorrect={onNextPage}
+        />
       </div>
     </div>
   );
