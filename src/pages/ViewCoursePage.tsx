@@ -102,6 +102,7 @@ const ViewCoursePage: React.FC = () => {
         content={currentPageContent?.content || course.course_content || "No content available"}
         currentPage={currentPage}
         totalPages={pages.length || 1}
+        pages={pages}
         onNextPage={handleNextPage}
         onPrevPage={handlePrevPage}
       />

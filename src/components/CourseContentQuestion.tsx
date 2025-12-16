@@ -1,17 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { generateQuizFromContent, QuizQuestion } from "../utils/quizGenerator";
 
 interface Props {
   content?: string;
   pageNumber?: number;
+  totalPages?: number;
+  courseId?: string;
+  courseName?: string;
+  pages?: { content: string }[];
   onCorrect?: () => void;
 }
 
 const CourseContentQuestion: React.FC<Props> = ({
   content = "",
   pageNumber = 1,
+  totalPages = 1,
+  courseId,
+  courseName,
+  pages,
   onCorrect,
 }) => {
+  const navigate = useNavigate();
   const [quiz, setQuiz] = useState<QuizQuestion | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -51,9 +61,22 @@ const CourseContentQuestion: React.FC<Props> = ({
     setIsCorrect(correct);
 
     if (correct) {
-      // advance to next page after a short delay (1200ms)
+      // Check if this is the last page
+      const isLastPage = pageNumber >= totalPages;
+
       timeoutRef.current = setTimeout(() => {
-        onCorrect?.();
+        if (isLastPage && courseId) {
+          // Redirect to start-quiz page with course data
+          navigate(`/start-quiz/${courseId}`, {
+            state: {
+              pages: pages,
+              courseName: courseName,
+            },
+          });
+        } else {
+          // Advance to next page
+          onCorrect?.();
+        }
         timeoutRef.current = null;
       }, 1200);
     }
@@ -124,7 +147,9 @@ const CourseContentQuestion: React.FC<Props> = ({
           }`}
         >
           {isCorrect
-            ? "✓ Correct! Well done."
+            ? pageNumber >= totalPages
+              ? "✓ Correct! Redirecting to quiz..."
+              : "✓ Correct! Well done."
             : "✗ Incorrect. The correct answer is highlighted in green."}
         </div>
       )}

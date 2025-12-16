@@ -1,7 +1,6 @@
 import React from "react";
 import CourseContentOverview from "./CourseContentOverview";
 import CourseContentQuestion from "./CourseContentQuestion";
-// ...existing code...
 
 interface Course {
   id?: string;
@@ -10,22 +9,29 @@ interface Course {
   course_url?: string | null;
 }
 
+interface ParsedPage {
+  pageNumber: number;
+  content: string;
+}
+
 interface Props {
   course?: Course | null;
   content?: string;
   currentPage?: number;
   totalPages?: number;
+  pages?: ParsedPage[];
   onNextPage?: () => void;
   onPrevPage?: () => void;
 }
 
-const CourseContentCard: React.FC<Props> = ({
+const CourseContentCard: React.FC<Props> = ({ 
   course,
   content = "No content available",
   currentPage = 1,
   totalPages = 1,
+  pages = [],
   onNextPage,
-  onPrevPage,
+  onPrevPage
 }) => {
   if (!course) {
     return (
@@ -40,11 +46,11 @@ const CourseContentCard: React.FC<Props> = ({
   return (
     <div className="w-full flex flex-row items-start gap-4">
       {/* Left column - Course Overview */}
-      <CourseContentOverview
+      <CourseContentOverview 
         courseName={course.course_name}
         courseDescription={course.course_description}
       />
-
+      
       {/* Right column - Content and Question */}
       <div className="flex-1 flex flex-col gap-4">
         {/* Content panel - fixed height with scroll */}
@@ -58,9 +64,7 @@ const CourseContentCard: React.FC<Props> = ({
             >
               ‹
             </button>
-            <h2 className="text-sm font-semibold uppercase">
-              {course.course_name}
-            </h2>
+            <h2 className="text-sm font-semibold uppercase">{course.course_name}</h2>
             <button
               onClick={onNextPage}
               disabled={currentPage === totalPages}
@@ -72,12 +76,16 @@ const CourseContentCard: React.FC<Props> = ({
           </div>
           <p className="text-xs text-black leading-relaxed">{content}</p>
         </div>
-
+        
         {/* Question panel - dynamically generated based on content */}
-        <CourseContentQuestion
-          content={content}
+        <CourseContentQuestion 
+          content={content} 
           pageNumber={currentPage}
-          onCorrect={onNextPage}
+          totalPages={totalPages}
+          courseId={course.id}
+          courseName={course.course_name ?? undefined}
+          pages={pages.map(p => ({ content: p.content }))}
+          onCorrect={onNextPage} 
         />
       </div>
     </div>
