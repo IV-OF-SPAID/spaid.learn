@@ -61,14 +61,16 @@ const UnfinishedCourses: React.FC<Props> = ({ user_id }) => {
         }
 
         // Combine progress and course data
-        const unfinishedCourses: UnfinishedCourse[] = progressData.map((p: any) => {
-          const course = courseData?.find((c: any) => c.id === p.course_id);
-          return {
-            course_id: p.course_id,
-            course_name: course?.course_name ?? "Unknown Course",
-            percentage: p.percentage ?? 0,
-          };
-        });
+        const unfinishedCourses: UnfinishedCourse[] = progressData.map(
+          (p: any) => {
+            const course = courseData?.find((c: any) => c.id === p.course_id);
+            return {
+              course_id: p.course_id,
+              course_name: course?.course_name ?? "Unknown Course",
+              percentage: p.percentage ?? 0,
+            };
+          }
+        );
 
         // Sort by percentage descending (highest progress first)
         unfinishedCourses.sort((a, b) => b.percentage - a.percentage);
@@ -112,15 +114,17 @@ const UnfinishedCourses: React.FC<Props> = ({ user_id }) => {
         {courses.length === 0 ? (
           <p className="text-sm text-gray-500">No unfinished courses.</p>
         ) : (
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col gap-2">
             {displayedCourses.map((course) => (
               <li
                 key={course.course_id}
-                className="text-sm cursor-pointer hover:underline flex justify-between items-center"
+                className="bg-white border-l-4 border-orange-400 rounded shadow-sm p-3 cursor-pointer hover:shadow-md transition-shadow flex justify-between items-center"
                 onClick={() => navigate(`/view-course/${course.course_id}`)}
               >
-                <span>{course.course_name}</span>
-                <span className="text-xs text-gray-500">{course.percentage}%</span>
+                <h3 className="font-semibold text-sm text-gray-800">
+                  {course.course_name}
+                </h3>
+                <p className="text-xs text-gray-500">{course.percentage}%</p>
               </li>
             ))}
           </ul>

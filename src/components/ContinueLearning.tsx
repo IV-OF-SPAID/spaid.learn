@@ -100,7 +100,7 @@ const ContinueLearning: React.FC<Props> = ({ user_id }) => {
   };
 
   // Don't render anything while loading
-  if (loading) {
+  if (loading && topCourse) {
     return (
       <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex overflow-hidden bg-white p-4">
         <div className="flex-1 flex flex-col p-5 gap-2">

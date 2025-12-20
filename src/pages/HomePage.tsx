@@ -82,13 +82,6 @@ const HomePage = () => {
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-screen bg-[#f8f8f8]">
       <div className="w-full lg:w-2/3 flex flex-col">
-        {/* Only show continue learning card if there's an unfinished course with progress */}
-        {!loadingTop && topCourse && (
-          <div className="mb-6">
-            <CourseOverviewCard course={topCourse} />
-          </div>
-        )}
-
         <RecoCourse />
         <Review />
         <QrCom />

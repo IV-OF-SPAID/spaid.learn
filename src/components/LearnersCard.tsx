@@ -25,18 +25,10 @@ const LearnersCard = () => {
     const fetchFinishedCourses = async () => {
       setLoading(true);
       const { data, error } = await supabase
-        .from("user_courses")
-        .select(
-          `
-            progress,
-            course_id (
-            id,
-            course_name
-            )
-        `
-        )
+        .from("user_course_progress")
+        .select("course_id")
         .eq("user_id", authUser?.id)
-        .eq("progress", 100);
+        .eq("completed", true);
 
       if (error) {
         console.error("Error fetching finished courses:", error);
@@ -55,18 +47,10 @@ const LearnersCard = () => {
     const fetchUnfinishedCourses = async () => {
       setLoading(true);
       const { data, error } = await supabase
-        .from("user_courses")
-        .select(
-          `
-            progress,
-            course_id (
-            id,
-            course_name
-            )
-        `
-        )
+        .from("user_course_progress")
+        .select("course_id")
         .eq("user_id", authUser?.id)
-        .lt("progress", 100);
+        .eq("completed", false);
 
       if (error) {
         console.error("Error fetching unfinished courses:", error);
@@ -145,18 +129,6 @@ const LearnersCard = () => {
               <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
               <div className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
             </div>
-          </div>
-        </div>
-
-        {/* Continue Learning Card Skeleton */}
-        <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex overflow-hidden bg-white p-4">
-          <div className="flex-1 flex flex-col p-5 gap-2">
-            <div className="w-36 h-6 bg-gray-200 rounded-full animate-pulse mx-auto md:mx-0" />
-            <div className="w-3/4 h-6 bg-gray-200 rounded animate-pulse" />
-            <div className="w-1/3 h-4 bg-gray-200 rounded animate-pulse" />
-          </div>
-          <div className="flex justify-center items-end p-4">
-            <div className="w-20 h-4 bg-gray-200 rounded animate-pulse" />
           </div>
         </div>
       </div>

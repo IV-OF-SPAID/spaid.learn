@@ -62,15 +62,17 @@ const FinishedCourses: React.FC<Props> = ({ user_id }) => {
         }
 
         // Combine progress and course data
-        const completedCourses: CompletedCourse[] = progressData.map((p: any) => {
-          const course = courseData?.find((c: any) => c.id === p.course_id);
-          return {
-            course_id: p.course_id,
-            course_name: course?.course_name ?? "Unknown Course",
-            completed_at: p.updated_at,
-            highest_quiz_score: p.highest_quiz_score ?? null,
-          };
-        });
+        const completedCourses: CompletedCourse[] = progressData.map(
+          (p: any) => {
+            const course = courseData?.find((c: any) => c.id === p.course_id);
+            return {
+              course_id: p.course_id,
+              course_name: course?.course_name ?? "Unknown Course",
+              completed_at: p.updated_at,
+              highest_quiz_score: p.highest_quiz_score ?? null,
+            };
+          }
+        );
 
         if (mounted) setCourses(completedCourses);
       } catch (err) {
@@ -88,6 +90,13 @@ const FinishedCourses: React.FC<Props> = ({ user_id }) => {
   }, [user_id]);
 
   const displayedCourses = showAll ? courses : courses.slice(0, 5);
+
+  const getScoreColor = (score: number | null) => {
+    if (score === 4 || score === 5) return "text-green-600";
+    if (score === 3) return "text-yellow-500";
+    if (score === 1 || score === 2) return "text-red-600";
+    return "text-gray-500";
+  };
 
   if (loading) {
     return (
@@ -115,17 +124,21 @@ const FinishedCourses: React.FC<Props> = ({ user_id }) => {
             {displayedCourses.map((course) => (
               <li
                 key={course.course_id}
-                className="flex justify-between items-center cursor-pointer hover:bg-gray-50 p-2 rounded"
+                className="bg-white border-l-4 border-orange-400 rounded shadow-sm p-3 cursor-pointer hover:shadow-md transition-shadow flex justify-between items-center"
                 onClick={() => navigate(`/view-course/${course.course_id}`)}
               >
-                <span className="text-sm hover:underline">
+                <h3 className="font-semibold text-sm text-gray-800">
                   {course.course_name}
-                </span>
-                <span className="text-xs text-gray-500">
+                </h3>
+                <p
+                  className={`text-xs ${getScoreColor(
+                    course.highest_quiz_score
+                  )}`}
+                >
                   {course.highest_quiz_score !== null
-                    ? `Best: ${course.highest_quiz_score}/5`
+                    ? `${course.highest_quiz_score}/5`
                     : "No score"}
-                </span>
+                </p>
               </li>
             ))}
           </ul>
