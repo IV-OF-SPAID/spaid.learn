@@ -1,9 +1,6 @@
-import React from "react";
-// ...existing code...
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import supabase from "../config/supabaseClient";
-import { getProgress, CourseProgress } from "../utils/progressTracker";
-// ...existing code...
 
 interface Course {
   id?: string;
@@ -17,51 +14,105 @@ interface Props {
 }
 
 const CourseOverviewCard: React.FC<Props> = ({ course }) => {
-  // ...existing code...
-  const [progress, setProgress] = useState<CourseProgress | null>(null);
+  const navigate = useNavigate();
+  const [progress, setProgress] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    let mounted = true;
-    async function fetchProgress() {
-      if (!course || !course.id) return;
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const p = await getProgress(user.id, course.id as string);
-      if (mounted) setProgress(p);
+    if (!course?.id) {
+      setLoading(false);
+      return;
     }
-    fetchProgress();
-    return () => { mounted = false; };
-  }, [course]);
 
-  if (!course) {
+    let mounted = true;
+    const fetchProgress = async () => {
+      setLoading(true);
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) {
+          if (mounted) setProgress(0);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from("user_course_progress")
+          .select("percentage, completed")
+          .eq("user_id", user.id)
+          .eq("course_id", course.id)
+          .single();
+
+        if (!error && data && mounted) {
+          // If completed, don't show this card (set progress to -1 as flag)
+          if (data.completed) {
+            setProgress(-1);
+          } else {
+            setProgress(data.percentage ?? 0);
+          }
+        } else if (mounted) {
+          setProgress(0);
+        }
+      } catch (e) {
+        if (mounted) setProgress(0);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchProgress();
+    return () => {
+      mounted = false;
+    };
+  }, [course?.id]);
+
+  // Don't render anything if:
+  // - no valid course
+  // - course is completed (progress === -1)
+  // - no progress started (progress === 0)
+  if (!course || !course.id || !course.course_name) {
+    return null;
+  }
+
+  if (!loading && (progress <= 0)) {
+    return null;
+  }
+
+  const handleViewCourse = () => {
+    if (course?.id) {
+      navigate(`/view-course/${course.id}`);
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="border border-[rgba(0,0,0,0.25)] p-6 w-full md:w-[340px] min-h-full flex flex-col">
-        <div className="text-xl mb-1">No course selected</div>
+      <div className="border border-[rgba(0,0,0,0.1)] bg-white rounded-lg p-4 shadow-sm animate-pulse">
+        <div className="h-4 bg-gray-300 rounded w-1/4 mb-2" />
+        <div className="h-5 bg-gray-300 rounded w-1/2 mb-2" />
+        <div className="h-3 bg-gray-300 rounded w-1/3" />
       </div>
     );
   }
 
   return (
-    <div className="border border-[rgba(0,0,0,0.25)] p-6 w-full md:w-[340px]  min-h-full flex flex-col">
-      <div className="text-medium mb-1">{course.course_name}</div>
-      <div className="text-sm mb-2">Course Overview</div>
-      <div className="text-sm text-black leading-relaxed flex-1 overflow-auto">
-        {course.course_description}
-      </div>
-
-      {/* Small progress row - does not change layout */}
-      <div className="mt-3 flex items-center justify-between text-xs">
-        <div className="text-[rgba(0,0,0,0.6)]">
-          {progress ? `${progress.percentage}% Completed` : "0% Completed"}
-        </div>
-        {progress && progress.percentage > 0 && course.id && (
-          <button
-            onClick={() => (window.location.href = `/view-course/${course.id}`)}
-            className="text-xs border border-[rgba(0,0,0,0.15)] rounded px-3 py-1 hover:bg-gray-50"
-          >
+    <div className="border border-[rgba(0,0,0,0.1)] bg-white rounded-lg p-4 shadow-sm">
+      <div className="flex justify-between items-start">
+        <div>
+          <span className="inline-block bg-[#ff0300] text-white text-xs px-3 py-1 rounded-full mb-2">
             Continue Learning
-          </button>
-        )}
+          </span>
+          <h3 className="font-semibold text-base text-black">
+            {course.course_name}
+          </h3>
+          <p className="text-sm text-gray-500">{progress}% Completed</p>
+        </div>
+        <button
+          type="button"
+          className="text-sm text-[#1a3c6e] hover:underline cursor-pointer"
+          onClick={handleViewCourse}
+        >
+          View Course
+        </button>
       </div>
     </div>
   );

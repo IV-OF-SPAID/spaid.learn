@@ -24,6 +24,7 @@ function EditCourse() {
   const [showToast, setShowToast] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const breadcrumbParts = ["Learn", "Courses", courseName || "Course"];
 
   useEffect(() => {
     if (!courseId) {
@@ -187,13 +188,18 @@ function EditCourse() {
       <button
         type="button"
         onClick={goBackOrFallback}
-        className="absolute top-20 hover:underline left-15 cursor-pointer text-sm text-[rgba(0,0,0,0.25)] flex justify-center items-center gap-2"
+        className="absolute top-20 left-15 cursor-pointer text-sm text-[rgba(0,0,0,0.25)] flex justify-center items-center gap-2"
       >
         <FaChevronLeft size={13} />
-        Learn / {courseName} / Edit Course
+        {breadcrumbParts.map((part, index) => (
+          <span key={index}>
+            <span className="hover:underline cursor-pointer">{part}</span>
+            {index < breadcrumbParts.length - 1 && " / "}
+          </span>
+        ))}
       </button>
 
-      <div className=" w-full max-w-4xl border border-[rgba(0,0,0,0.25)] px-10 py-5 mt-15">
+      <div className=" w-full max-w-4xl border border-[rgba(0,0,0,0.25)] px-10 py-5 mt-20 rounded-lg">
         <h2 className="text-lg font-medium text-center mb-8">Edit Course</h2>
 
         <form onSubmit={handleSubmit}>

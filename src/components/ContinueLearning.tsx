@@ -1,69 +1,146 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import supabase from "../config/supabaseClient";
 
-interface ContinueLearningProps {
-  user_id: string;
+interface Props {
+  user_id?: string | null;
 }
 
-const ContinueLearning: React.FC<ContinueLearningProps> = ({ user_id }) => {
-  const [courses, setCourses] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
+interface TopCourse {
+  id: string;
+  course_name: string | null;
+  percentage: number;
+}
 
-  React.useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("user_courses")
-        .select(
-          `
-            progress,
-            course_id (
-            id,
-            course_name
-            )
-        `
-        )
-        .eq("user_id", user_id)
-        .lt("progress", 100);
+const ContinueLearning: React.FC<Props> = ({ user_id }) => {
+  const navigate = useNavigate();
+  const [topCourse, setTopCourse] = useState<TopCourse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-      if (error) {
-        console.error("Error fetching unfinished courses:", error);
-      } else {
-        setCourses(data || []);
-      }
+  useEffect(() => {
+    if (!user_id) {
       setLoading(false);
+      setTopCourse(null);
+      return;
+    }
+
+    let mounted = true;
+
+    const fetchTopUnfinished = async () => {
+      setLoading(true);
+      try {
+        // Fetch progress from user_course_progress table
+        const { data: progressData, error: progressError } = await supabase
+          .from("user_course_progress")
+          .select("course_id, percentage, completed")
+          .eq("user_id", user_id);
+
+        if (progressError || !progressData || progressData.length === 0) {
+          if (mounted) setTopCourse(null);
+          return;
+        }
+
+        // Filter for unfinished courses with progress > 0
+        const unfinished = progressData.filter(
+          (p) => p.completed === false && p.percentage > 0
+        );
+
+        if (unfinished.length === 0) {
+          if (mounted) setTopCourse(null);
+          return;
+        }
+
+        // Pick the one with highest percentage
+        const best = unfinished.reduce((a, b) =>
+          (a.percentage ?? 0) >= (b.percentage ?? 0) ? a : b
+        );
+
+        if (!best || !best.course_id || best.percentage <= 0) {
+          if (mounted) setTopCourse(null);
+          return;
+        }
+
+        // Fetch course details
+        const { data: courseData, error: courseError } = await supabase
+          .from("course_id")
+          .select("id, course_name")
+          .eq("id", best.course_id)
+          .single();
+
+        if (courseError || !courseData || !courseData.course_name) {
+          if (mounted) setTopCourse(null);
+          return;
+        }
+
+        if (mounted) {
+          setTopCourse({
+            id: courseData.id,
+            course_name: courseData.course_name,
+            percentage: best.percentage,
+          });
+        }
+      } catch (e) {
+        console.error("ContinueLearning fetch error:", e);
+        if (mounted) setTopCourse(null);
+      } finally {
+        if (mounted) setLoading(false);
+      }
     };
 
-    if (user_id) {
-      fetchCourses();
-    }
+    fetchTopUnfinished();
+    return () => {
+      mounted = false;
+    };
   }, [user_id]);
 
+  const handleViewCourse = () => {
+    if (topCourse?.id) {
+      navigate(`/view-course/${topCourse.id}`);
+    }
+  };
+
+  // Don't render anything while loading
+  if (loading) {
+    return (
+      <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex overflow-hidden bg-white p-4">
+        <div className="flex-1 flex flex-col p-5 gap-2">
+          <div className="w-36 h-6 bg-gray-200 rounded-full animate-pulse mx-auto md:mx-0" />
+          <div className="w-3/4 h-6 bg-gray-200 rounded animate-pulse" />
+          <div className="w-1/3 h-4 bg-gray-200 rounded animate-pulse" />
+        </div>
+        <div className="flex justify-center items-end p-4">
+          <div className="w-20 h-4 bg-gray-200 rounded animate-pulse" />
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if no unfinished course with progress
+  if (!topCourse || !topCourse.course_name || topCourse.percentage <= 0) {
+    return null;
+  }
+
   return (
-    <div className="w-full lg:max-w-md flex overflow-hidden bg-white">
+    <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex overflow-hidden bg-white p-4">
       <div className="flex-1 flex flex-col p-5 gap-2">
-        <h1 className="text-xs text-center border-1 bg-[#ff0300] rounded-full px-4 py-0.5 w-fit mx-auto md:mx-0 text-white">
+        <span className="inline-block bg-[#ff0300] text-white text-xs px-3 py-1 rounded-full w-fit mx-auto md:mx-0">
           Continue Learning
-        </h1>
-        <h1 className="text-base font-semibold">
-          {courses[0]?.course_id?.course_name || "Untitled Course"}
-        </h1>
-        <p className="text-xs text-gray-600">
-          {courses[0]?.progress}% Completed
+        </span>
+        <h3 className="font-semibold text-base text-black">
+          {topCourse.course_name}
+        </h3>
+        <p className="text-sm text-gray-500">
+          {topCourse.percentage}% Completed
         </p>
       </div>
       <div className="flex justify-center items-end p-4">
-        {courses.length > 0 ? (
-          <Link
-            to={`/course/${courses[0]?.course_id?.id}`}
-            className="text-[#013F5E] font-medium"
-          >
-            View Course
-          </Link>
-        ) : (
-          <span className="text-gray-400 text-sm">No course</span>
-        )}
+        <button
+          type="button"
+          className="text-sm text-[#1a3c6e] hover:underline cursor-pointer"
+          onClick={handleViewCourse}
+        >
+          View Course
+        </button>
       </div>
     </div>
   );

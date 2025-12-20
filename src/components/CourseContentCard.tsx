@@ -53,7 +53,7 @@ const CourseContentCard: React.FC<Props> = ({
       />
 
       {/* Right column - Content and Question */}
-      <div className="flex-1 flex flex-col h-[83vh] gap-2">
+      <div className="flex-1 flex flex-col h-[92vh] gap-2">
         {/* Content panel - fixed height with scroll */}
         <div className="border border-[rgba(0,0,0,0.25)] rounded-lg p-4 h-[300px] flex-1 overflow-y-auto">
           <div className="flex items-center justify-center gap-2 mb-3 top-0 bg-white pb-2">

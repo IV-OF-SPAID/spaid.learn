@@ -10,7 +10,7 @@ const CourseContentOverview: React.FC<Props> = ({
   courseDescription,
 }) => {
   return (
-    <div className="border border-[rgba(0,0,0,0.25)] rounded-lg p-4 w-[280px] h-[83vh] ">
+    <div className="border border-[rgba(0,0,0,0.25)] rounded-lg p-4 w-[280px] h-[92vh] ">
       <h2 className="text-sm font-semibold mb-0">{courseName}</h2>
       <h3 className="font-semibold text-sm mb-2">Course Overview</h3>
       <p className="text-xs text-black leading-relaxed">{courseDescription}</p>

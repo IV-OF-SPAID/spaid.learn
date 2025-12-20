@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import supabase from "../config/supabaseClient";
 import pallete from "../assets/img/pallete.png";
 
@@ -12,6 +12,7 @@ type Course = {
 };
 
 const RecoCourse = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
   const [recommended, setRecommended] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,6 +47,38 @@ const RecoCourse = () => {
     fetchCourses();
   }, []);
 
+  const handleStartLearning = async (courseId?: number) => {
+    if (!courseId) return;
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        navigate(`/course/${courseId}`);
+        return;
+      }
+
+      // upsert a minimal progress record so Continue Learning will show
+      await supabase.from("user_course_progress").upsert(
+        {
+          user_id: user.id,
+          course_id: courseId,
+          current_page: 1,
+          total_pages: 1,
+          percentage: 1,
+          completed: false,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,course_id" }
+      );
+    } catch (e) {
+      console.error("Error creating/updating progress:", e);
+    } finally {
+      navigate(`/course/${courseId}`);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col px-4 md:px-20 pt-8 md:pt-28 gap-5 ">
       {loading ? (
@@ -68,13 +101,14 @@ const RecoCourse = () => {
                 <h1 className="text-sm w-full md:w-90 text-[#403F3F]">
                   {recommended.course_description}
                 </h1>
-                <Link
-                  to={`/course/${recommended.id}`}
-                  state={{ course: recommended }}
+
+                {/* use button so we can create progress before navigating */}
+                <button
+                  onClick={() => handleStartLearning(recommended.id)}
                   className=" w-full md:w-50 h-10  flex justify-center items-center rounded-xl cursor-pointer mt-2 md:mt-0 bg-[#ff9801]"
                 >
                   Start Learning Now
-                </Link>
+                </button>
               </div>
             </>
           ) : (
