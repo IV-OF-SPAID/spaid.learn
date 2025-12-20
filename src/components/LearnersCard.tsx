@@ -21,6 +21,10 @@ const LearnersCard = () => {
   const [finishedCourses, setFinishedCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // instructor-specific stats
+  const [uploadedCoursesCount, setUploadedCoursesCount] = useState<number>(0);
+  const [enrolledStudentsCount, setEnrolledStudentsCount] = useState<number>(0);
+
   useEffect(() => {
     const fetchFinishedCourses = async () => {
       setLoading(true);
@@ -106,6 +110,33 @@ const LearnersCard = () => {
     };
   }, []);
 
+  // Fetch instructor stats when role is instructor
+  useEffect(() => {
+    const fetchInstructorStats = async () => {
+      if (role !== "instructor" || !authUser?.id) return;
+
+      // Fetch courses uploaded by instructor
+      const { data: courses, error: coursesError } = await supabase
+        .from("course_id")
+        .select("id")
+        .eq("uploader_id", authUser.id);
+
+      if (coursesError) {
+        console.error("Error fetching instructor courses:", coursesError);
+        return;
+      }
+      setUploadedCoursesCount(courses?.length || 0);
+
+      if (courses && courses.length > 0) {
+        const courseIds = courses.map((c: any) => c.id);
+
+        // Fetch enrolled students count across all instructor's courses
+      }
+    };
+
+    fetchInstructorStats();
+  }, [role, authUser?.id]);
+
   // skeleton while loading
   if (loading) {
     return (
@@ -148,7 +179,6 @@ const LearnersCard = () => {
             className="h-full flex flex-col justify-center items-center py-4"
           >
             <img
-              // prefer DB profile avatar, then auth metadata, then default
               src={
                 avatarUrl ||
                 token?.user?.user_metadata?.avatar_url ||
@@ -165,18 +195,32 @@ const LearnersCard = () => {
             </div>
           </Link>
         </div>
-        <div className="w-3/5 bg-[#f5f5f5] flex flex-col justify-between items-center py-4">
+        <div
+          className={`w-3/5 bg-[#f5f5f5] flex flex-col ${
+            role === "instructor" ? "justify-center" : "justify-between"
+          } items-center py-4`}
+        >
           <div className="w-full flex flex-col justify-center px-4">
-            <h1 className="text-[#403F3F]">Courses Completed</h1>
-            <h1 className="text-xl">{finishedCourses.length}</h1>
+            <h1 className="text-[#403F3F]">
+              {role === "instructor" ? "Courses Uploaded" : "Courses Completed"}
+            </h1>
+            <h1 className="text-xl">
+              {role === "instructor"
+                ? uploadedCoursesCount
+                : finishedCourses.length}
+            </h1>
           </div>
-          <div className="flex items-center w-4/5 py-3">
-            <hr className="flex-grow border-t border-gray-300"></hr>
-          </div>
-          <div className="w-full flex flex-col justify-center px-4">
-            <h1 className="text-[#403F3F]">Ongoing Courses</h1>
-            <h1 className="text-xl">{unfinishedCourses.length}</h1>
-          </div>
+          {role === "student" && (
+            <div className="flex items-center w-4/5 py-3">
+              <hr className="flex-grow border-t border-gray-300"></hr>
+            </div>
+          )}
+          {role === "student" && (
+            <div className="w-full flex flex-col justify-center px-4">
+              <h1 className="text-[#403F3F]">Ongoing Courses</h1>
+              <h1 className="text-xl">{unfinishedCourses.length}</h1>
+            </div>
+          )}
         </div>
       </div>
 

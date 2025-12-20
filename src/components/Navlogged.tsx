@@ -129,16 +129,18 @@ const Navlogged = () => {
             >
               Home
             </Link>
-            <Link
-              to="/Courses"
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                location.pathname === "/Courses"
-                  ? "bg-[#ff9801] text-white"
-                  : "text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Learn
-            </Link>
+            {profileState.role == "instuctor" && (
+              <Link
+                to="/Courses"
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  location.pathname === "/Courses"
+                    ? "bg-[#ff9801] text-white"
+                    : "text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Learn
+              </Link>
+            )}
           </div>
           <button
             type="button"

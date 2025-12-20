@@ -17,12 +17,7 @@ const AddCoursePage = () => {
   const [profileId, setProfileId] = useState<any>(null);
   const navigate = useNavigate();
   const profile = JSON.parse(sessionStorage.getItem("profile") || "null");
-
-  useEffect(() => {
-    if (profile) {
-      setProfileId(profile.id);
-    }
-  }, [profile]);
+  const role = profile?.role;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -236,7 +231,7 @@ const AddCoursePage = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-gray-100 px-8 py-2 rounded-lg ${
+              className={`bg-[#ff9801] px-8 py-2 rounded-lg ${
                 !loading ? "cursor-pointer" : "cursor-progress"
               } font-medium text-sm`}
             >
