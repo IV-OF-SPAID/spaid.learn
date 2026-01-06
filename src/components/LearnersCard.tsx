@@ -86,28 +86,46 @@ const LearnersCard = () => {
 
     const fetchCourseCounts = async () => {
       try {
-        console.log("Fetching course counts for user:", authUser.id);
+        console.log("=== DEBUG START ===");
+        console.log("Current authUser.id:", authUser.id);
+        console.log("User ID type:", typeof authUser.id);
 
         // Fetch ALL progress records for this user
         const { data: allProgress, error: progressError } = await supabase
           .from("user_course_progress")
-          .select("course_id, completed, percentage")
+          .select("course_id, completed, percentage, user_id")
           .eq("user_id", authUser.id);
+
+        console.log("Query user_id:", authUser.id);
+        console.log("Progress error:", progressError);
+        console.log("All progress records:", JSON.stringify(allProgress, null, 2));
+        console.log("Number of records:", allProgress?.length);
 
         if (progressError) {
           console.error("Error fetching progress:", progressError);
           return;
         }
 
-        console.log("All progress records:", allProgress);
+        if (!allProgress || allProgress.length === 0) {
+          console.log("No progress records found for this user!");
+          setCompletedCount(0);
+          setOngoingCount(0);
+          return;
+        }
+
+        // Log each record's completed value
+        allProgress.forEach((p, i) => {
+          console.log(`Record ${i}: course_id=${p.course_id}, completed=${p.completed}, type=${typeof p.completed}`);
+        });
 
         // Count completed (completed = true)
-        const completed = allProgress?.filter(p => p.completed === true) || [];
-        // Count ongoing (completed = false or null, and has some progress)
-        const ongoing = allProgress?.filter(p => p.completed !== true) || [];
+        const completed = allProgress.filter(p => p.completed === true);
+        // Count ongoing (completed = false or null)
+        const ongoing = allProgress.filter(p => p.completed !== true);
 
-        console.log("Completed courses:", completed.length, completed);
-        console.log("Ongoing courses:", ongoing.length, ongoing);
+        console.log("Completed count:", completed.length);
+        console.log("Ongoing count:", ongoing.length);
+        console.log("=== DEBUG END ===");
 
         setCompletedCount(completed.length);
         setOngoingCount(ongoing.length);
