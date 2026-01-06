@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import Avatarcard from "../assets/img/defAvatar.svg";
+import pallete from "../assets/img/pallete.png";
 import { FaPencilAlt, FaCamera } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
 import { Link } from "react-router-dom";
@@ -385,14 +386,16 @@ const AccountProf = () => {
         aria-hidden="true"
       />
 
-      <div className=" h-95 w-full px-10 md:px-15 lg:px-30 py-20 relative">
-        <div className="relative ">
-          <div className="w-1080px h-50 bg-[#f5f5f5]  rounded-md">
-            <FaCamera className="text-[#989898] text-3xl absolute top-5 right-7" />
-          </div>
+      <div className="h-95 w-full px-10 md:px-15 lg:px-30 py-20 relative">
+        <div className="relative">
+          {/* Cover photo with pallete image */}
+          <div
+            className="w-full h-50 rounded-md bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${pallete})` }}
+          />
 
-          <div className="absolute  bottom-[-90px] h-[120px]  w-full flex items-center">
-            <div className="flex flex-col md:flex-row md:items-center  w-2/4 gap-5 md:pl-5 ">
+          <div className="absolute bottom-[-90px] h-[120px] w-full flex items-center">
+            <div className="flex flex-col md:flex-row md:items-center w-2/4 gap-5 md:pl-5">
               <div className="relative">
                 {/* fixed square container ensures perfect circle + clipping */}
                 <div className="w-[120px] h-[120px] rounded-full overflow-hidden">
@@ -415,7 +418,7 @@ const AccountProf = () => {
                 <h1 className="md:text-2xl text-xl px-3">{displayName}</h1>
               ) : (
                 <input
-                  className="md:text-2xl text-xl  px-3 border-b-1 focus:outline-none"
+                  className="md:text-2xl text-xl px-3 border-b-1 focus:outline-none"
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
                   disabled={saving}
@@ -423,10 +426,10 @@ const AccountProf = () => {
                 />
               )}
 
-              {role != "student" && !editing && (
+              {role !== "student" && !editing && (
                 <Link
                   to="/add-course"
-                  className=" ml-2 flex bg-[#ff9801] w-30 justify-center items-center h-8 rounded cursor-pointer "
+                  className="ml-2 flex bg-[#ff9801] w-30 justify-center items-center h-8 rounded cursor-pointer"
                 >
                   Add Course
                 </Link>
@@ -438,13 +441,12 @@ const AccountProf = () => {
                   tabIndex={0}
                   title="Change avatar"
                   aria-disabled={false}
-                  className="absolute bottom-0 w-fit left-27 text-5xl p-2  cursor-pointer text-[#ff9801]"
+                  className="absolute bottom-0 w-fit left-27 text-5xl p-2 cursor-pointer text-[#ff9801]"
                 />
               )}
-              {/* <FaCamera className="text-[#989898] text-3xl absolute bottom-5 left-25 md:bottom-0 md:left-27" /> */}
             </div>
 
-            <div className="w-2/4 h-full  flex justify-end items-center">
+            <div className="w-2/4 h-full flex justify-end items-center">
               {!editing ? (
                 <button
                   onClick={handleStartEdit}

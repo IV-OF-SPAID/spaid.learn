@@ -20,7 +20,6 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
 
   useEffect(() => {
     if (!uploader_id) {
-      console.log("No uploader_id provided");
       setLoading(false);
       return;
     }
@@ -29,18 +28,12 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
       setLoading(true);
       setError(null);
 
-      console.log("Fetching courses for uploader_id:", uploader_id);
-
       const { data, error: fetchError } = await supabase
         .from("course_id")
         .select("id, course_name, course_description")
         .eq("uploader_id", uploader_id);
 
-      console.log("Fetched courses:", data);
-      console.log("Fetch error:", fetchError);
-
       if (fetchError) {
-        console.error("Error fetching courses:", fetchError);
         setError(fetchError.message);
         setCourses([]);
       } else {
@@ -89,7 +82,7 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
           {courses.map((course) => (
             <div
               key={course.id}
-              className="flex justify-between items-center h-17 py-2 border-l-4 border-[#ff9801] rounded-lg shadow-sm pl-3 pr-6 cursor-pointer hover:shadow-md transition-shadow"
+              className="flex justify-between items-center h-17 py-2 border-l-4 border-[#ff9801] bg-white rounded-lg shadow-sm pl-3 pr-6 cursor-pointer hover:shadow-md transition-shadow"
             >
               <div className="flex-1">
                 <h3 className="font-medium">{course.course_name}</h3>
