@@ -89,7 +89,7 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
           {courses.map((course) => (
             <div
               key={course.id}
-              className="flex justify-between items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+              className="flex justify-between items-center h-17 py-2 border-l-4 border-[#ff9801] rounded-lg shadow-sm pl-3 pr-6 cursor-pointer hover:shadow-md transition-shadow"
             >
               <div className="flex-1">
                 <h3 className="font-medium">{course.course_name}</h3>
@@ -97,12 +97,6 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
                   {course.course_description}
                 </p>
               </div>
-              <button
-                onClick={() => handleViewCourse(course.id)}
-                className="ml-4 px-4 py-2 text-sm bg-[#ff9801] text-white rounded-lg hover:bg-[#e88a00] transition-colors"
-              >
-                View
-              </button>
             </div>
           ))}
         </div>

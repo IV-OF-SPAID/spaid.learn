@@ -122,7 +122,7 @@ const FinishedCourses: React.FC<Props> = ({ user_id }) => {
             {displayedCourses.map((course) => (
               <li
                 key={course.course_id}
-                className="flex justify-between items-center h-40 py-2 border-l-4 border-[#ff9801] rounded-lg shadow-sm pl-3 cursor-pointer hover:shadow-md transition-shadow"
+                className="flex justify-between items-center h-17 py-2 border-l-4 border-[#ff9801] rounded-lg shadow-sm pl-3 cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => navigate(`/view-course/${course.course_id}`)}
               >
                 <span className="text-sm hover:underline">
