@@ -15,7 +15,7 @@ const QrCom = () => {
             Learning courses available offline
           </h1>
         </div>
-        <div className="h-full flex justify-center md:justify-end items-end w-full md:w-auto mt-2 md:mt-0">
+        <div className="h-full flex justify-center md:justify-end items-end w-full md:w-100 mt-2 md:mt-0">
           <a href="#" className="text-[#403F3F] text-sm">
             Scan the QR code to get the app
           </a>
