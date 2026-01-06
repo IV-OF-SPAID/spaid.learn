@@ -1,11 +1,9 @@
-import Avatar from "../assets/img/defAvatar.svg";
 import ChevDown from "../assets/img/chevronD.svg";
 import { Link, useLocation } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
 import { useState, useEffect, useRef } from "react";
 
 const Navlogged = () => {
-  // Synchronous (no-delay) token hydration without useSyncExternalStore
   const [token, setToken] = useState<any>(() => {
     try {
       return JSON.parse(sessionStorage.getItem("token") || "null");
@@ -24,7 +22,6 @@ const Navlogged = () => {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
 
-  // Close dropdown on outside click
   useEffect(() => {
     if (!showMenu) return;
     function handleClickOutside(e: MouseEvent) {
@@ -36,7 +33,6 @@ const Navlogged = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showMenu]);
 
-  // Listen for profile + token updates (same-tab & cross-tab)
   useEffect(() => {
     function updateProfile(detail?: any) {
       if (detail) {
@@ -98,18 +94,18 @@ const Navlogged = () => {
   const firstName = username ? username.split(" ")[0] : "User";
   const role = profileState?.role ?? "Learner";
 
-  // Derive avatar URL with correct fallback chain
+  // Get avatar URL from profile or token
   const avatarUrl =
-    profileState?.avatar_url ||
-    token?.user?.user_metadata?.avatar_url ||
-    Avatar;
+    profileState?.avatar_url || token?.user?.user_metadata?.avatar_url || null;
 
-  // New: derive a robust logged-in flag from session user
+  // Get first letter for fallback avatar
+  const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : "U";
+
   const isLoggedIn = username ? true : false;
 
   return (
-    <nav className=" w-full h-15 border-b-1 border-[rgba(0,0,0,0.25)] bg-white flex items-center pl-5 fixed z-50 ">
-      <div className="flex w-2/4 ">
+    <nav className="w-full h-15 border-b-1 border-[rgba(0,0,0,0.25)] bg-white flex items-center pl-5 fixed z-50">
+      <div className="flex w-2/4">
         {isLoggedIn ? (
           <Link to="/Home" className="flex">
             <h1 className="poppins-extrabold text-3xl text-[#ff0000]">SPAID</h1>
@@ -123,7 +119,7 @@ const Navlogged = () => {
         )}
       </div>
       {profileState && (
-        <div className="w-2/4  h-full flex justify-end items-center">
+        <div className="w-2/4 h-full flex justify-end items-center">
           <div className="flex gap-1 p-1 bg-[#f5f5f5] rounded-full">
             <Link
               to="/Home"
@@ -149,13 +145,20 @@ const Navlogged = () => {
           <button
             type="button"
             onClick={() => setShowMenu(!showMenu)}
-            className=" h-11 min-w-[160px] rounded-xl bg-[#f5f5f5] cursor-pointer gap-2 flex px-3 justify-between items-center mx-8"
+            className="h-11 min-w-[160px] rounded-xl bg-[#f5f5f5] cursor-pointer gap-2 flex px-3 justify-between items-center mx-8"
           >
-            <img
-              src={avatarUrl}
-              alt={profileState?.username ?? "profile"}
-              className="w-8 h-8 bg-white rounded-full object-cover"
-            />
+            {/* Avatar - show image if available, otherwise show letter */}
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={profileState?.username ?? "profile"}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-[#9c27b0] flex items-center justify-center text-white font-semibold text-sm">
+                {firstLetter}
+              </div>
+            )}
             <div className="flex flex-col justify-center items-center">
               <h1>{firstName}</h1>
               <p className="text-xs text-[#403F3F]">{role}</p>
