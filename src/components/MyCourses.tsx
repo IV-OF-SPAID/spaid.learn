@@ -10,7 +10,6 @@ interface Course {
   id: string;
   course_name: string;
   course_description: string;
-  created_at: string;
 }
 
 const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
@@ -29,14 +28,13 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
     const fetchMyCourses = async () => {
       setLoading(true);
       setError(null);
-      
+
       console.log("Fetching courses for uploader_id:", uploader_id);
 
       const { data, error: fetchError } = await supabase
         .from("course_id")
-        .select("id, course_name, course_description, created_at")
-        .eq("uploader_id", uploader_id)
-        .order("created_at", { ascending: false });
+        .select("id, course_name, course_description")
+        .eq("uploader_id", uploader_id);
 
       console.log("Fetched courses:", data);
       console.log("Fetch error:", fetchError);
@@ -83,7 +81,7 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-semibold">My Uploaded Courses</h2>
-      
+
       {courses.length === 0 ? (
         <p className="text-gray-500">You haven't uploaded any courses yet.</p>
       ) : (

@@ -18,7 +18,6 @@ const AccountSettCourses: React.FC = () => {
         if (userErr) console.error("getUser error:", userErr);
         const user = userRes?.user ?? null;
         if (!mounted) return;
-        console.debug("current user:", user);
         setUserId(user?.id ?? null);
 
         if (!user?.id) {
@@ -33,9 +32,11 @@ const AccountSettCourses: React.FC = () => {
           .eq("id", user.id)
           .maybeSingle();
         if (profileErr) console.error("profile fetch error:", profileErr);
-        console.debug("profileData:", profileData);
-        const fetchedRole = (profileData as any)?.role ?? null;
-        console.log("Fetched role:", fetchedRole); // Debug log
+        
+        // Trim the role to remove any whitespace
+        const fetchedRole = ((profileData as any)?.role ?? null)?.trim() ?? null;
+        console.log("Fetched role (trimmed):", fetchedRole);
+        
         if (mounted) setRole(fetchedRole);
       } catch (err) {
         console.error("AccountSettCourses load error:", err);
@@ -47,9 +48,6 @@ const AccountSettCourses: React.FC = () => {
       mounted = false;
     };
   }, []);
-
-  // Debug log
-  console.log("Current state - role:", role, "userId:", userId, "loading:", loading);
 
   if (loading) {
     return (
@@ -75,7 +73,7 @@ const AccountSettCourses: React.FC = () => {
     );
   }
 
-  // Check role case-insensitively
+  // Check role case-insensitively (already trimmed above)
   const isInstructor = role?.toLowerCase() === "instructor";
   const isStudent = role?.toLowerCase() === "student";
 
@@ -83,17 +81,13 @@ const AccountSettCourses: React.FC = () => {
     <div className="p-8 md:px-15 lg:px-30">
       <div className="w-full gap-5 md:gap-10 flex flex-col justify-between rounded-xl md:p-5">
         {isInstructor && (
-          <>
-            <MyCourses uploader_id={userId} />
-          </>
+          <MyCourses uploader_id={userId} />
         )}
 
         {isStudent && (
           <div>
             <UnfinishedCourses user_id={userId} />
-
             <div className="block h-[1px] md:h-auto md:my-5 md:w-[2px] bg-gray-300 mx-2"></div>
-
             <FinishedCourses user_id={userId} />
           </div>
         )}
