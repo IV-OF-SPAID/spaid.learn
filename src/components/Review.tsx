@@ -29,7 +29,6 @@ const Review = () => {
           return;
         }
 
-        // Get all completed courses for this user
         const { data: progressData, error: progressError } = await supabase
           .from("user_course_progress")
           .select("course_id")
@@ -41,7 +40,6 @@ const Review = () => {
           return;
         }
 
-        // Get course names
         const courseIds = progressData.map((p) => p.course_id);
         const { data: courseData, error: courseError } = await supabase
           .from("course_id")
@@ -60,7 +58,6 @@ const Review = () => {
 
         if (mounted) {
           setFinishedCourses(courses);
-          // Pick up to 3 random courses to display
           const shuffled = [...courses].sort(() => Math.random() - 0.5);
           setDisplayCourses(shuffled.slice(0, 3));
         }
@@ -80,17 +77,14 @@ const Review = () => {
 
   const handleReviewClick = (courseId?: string) => {
     if (courseId) {
-      // Navigate to the specific course's quiz
       navigate(`/start-quiz/${courseId}`);
     }
   };
 
-  // Don't render anything while loading
   if (loading) {
     return null;
   }
 
-  // Don't render if no finished courses
   if (finishedCourses.length === 0) {
     return null;
   }
@@ -102,17 +96,16 @@ const Review = () => {
         <div className="w-full flex flex-col md:flex-row justify-between items-center gap-4 md:gap-4">
           {displayCourses.map((course) => (
             <button
-              style={{ backgroundImage: `url(${pallete})` }}
               key={course.course_id}
               onClick={() => handleReviewClick(course.course_id)}
-              className="w-full md:w-65 h-20 md:h-25 p-5 rounded-xl flex justify-center items-center bg-[url('../../public/pallete.png')] shadow-sm bg-cover bg-center hover:shadow-md transition-shadow cursor-pointer"
+              style={{ backgroundImage: `url(${pallete})` }}
+              className="w-full md:w-65 h-20 md:h-25 p-5 rounded-xl flex justify-center items-center shadow-sm bg-cover bg-center hover:shadow-md transition-shadow cursor-pointer"
             >
               <h1 className="text-white text-sm text-center font-semibold truncate max-w-full px-2">
                 {course.course_name || "Untitled Course"}
               </h1>
             </button>
           ))}
-          {/* Fill remaining slots if less than 3 finished courses */}
           {displayCourses.length < 3 &&
             Array.from({ length: 3 - displayCourses.length }).map((_, index) => (
               <div
