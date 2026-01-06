@@ -121,7 +121,7 @@ const ContinueLearning: React.FC<Props> = ({ user_id }) => {
   }
 
   return (
-    <div className="w-full lg:max-w-md border-1 border-[rgba(0,0,0,0.25)] flex overflow-hidden bg-white p-4">
+    <div className="w-full lg:max-w-md rounded-lg flex overflow-hidden bg-white p-4">
       <div className="flex-1 flex flex-col p-5 gap-2">
         <span className="inline-block bg-[#ff0300] text-white text-xs px-3 py-1 rounded-full w-fit mx-auto md:mx-0">
           Continue Learning
