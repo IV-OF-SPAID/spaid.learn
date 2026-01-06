@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import supabase from "../config/supabaseClient";
+import pallete from "../assets/img/pallete.png";
 
 interface FinishedCourse {
   course_id: string;
@@ -101,6 +102,7 @@ const Review = () => {
         <div className="w-full flex flex-col md:flex-row justify-between items-center gap-4 md:gap-4">
           {displayCourses.map((course) => (
             <button
+              style={{ backgroundImage: `url(${pallete})` }}
               key={course.course_id}
               onClick={() => handleReviewClick(course.course_id)}
               className="w-full md:w-65 h-20 md:h-25 p-5 rounded-xl flex justify-center items-center bg-[url('../../public/pallete.png')] shadow-sm bg-cover bg-center hover:shadow-md transition-shadow cursor-pointer"

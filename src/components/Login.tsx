@@ -3,6 +3,7 @@ import { data, useNavigate } from "react-router-dom";
 import Glogo from "../assets/img/gLogo.svg";
 import Flogo from "../assets/img/fLogo.svg";
 import supabase from "../config/supabaseClient";
+import pallete from "../assets/img/pallete.png";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const Login = () => {
@@ -126,8 +127,8 @@ const Login = () => {
   return (
     <>
       <div className="min-h-screen w-full flex justify-center items-center bg-white px-2 py-8">
-        <div className="w-full max-w-3xl md:h-[470px] border-1 border-[rgba(0,0,0,0.25)] flex flex-col md:flex-row  overflow-hidden shadow-md bg-white">
-          <div className="w-full md:w-[55%] h-full bg-[#f5f5f5] border-b-1 md:border-b-0 md:border-r-1 border-[rgba(0,0,0,0.25)] hidden md:flex flex-col justify-center items-center p-6 md:p-0">
+        <div className="w-full max-w-3xl md:h-[450px] border-1 border-[rgba(0,0,0,0.25)] flex flex-col md:flex-row  overflow-hidden shadow-md bg-white">
+          <div className="w-full md:w-[55%] h-full bg-[#f5f5f5] border-b-1 md:border-b-0 md:border-r-1 border-[rgba(0,0,0,0.25)] hidden md:flex flex-col justify-center items-center p-6 md:p-0" style={{ backgroundImage: `url(${pallete})` }}>
             <div className="w-full max-w-xs h-auto flex flex-col justify-between">
               <h1 className="text-2xl md:text-4xl poppins-medium mb-2">
                 Start learning now
