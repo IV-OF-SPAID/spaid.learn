@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 interface UnfinishedCoursesProps {
   user_id: string | null;
@@ -12,6 +13,7 @@ interface Course {
 }
 
 const UnfinishedCourses: React.FC<UnfinishedCoursesProps> = ({ user_id }) => {
+  const navigate = useNavigate(); // Add this line
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,19 +103,20 @@ const UnfinishedCourses: React.FC<UnfinishedCoursesProps> = ({ user_id }) => {
       {courses.length === 0 ? (
         <p className="text-gray-500 text-sm">No unfinished courses.</p>
       ) : (
-        <div className="flex flex-col">
+        <ul className="flex flex-col">
           {courses.map((course) => (
-            <div
+            <li
               key={course.course_id}
-              className="flex justify-between items-center py-2 border-l-4 border-[#ff9801] pl-3"
+              className="flex justify-between items-center py-2 border-l-4 border-[#ff9801] pl-3 cursor-pointer hover:bg-gray-50"
+              onClick={() => navigate(`/view-course/${course.course_id}`)}
             >
               <span className="text-sm">
                 {course.course_name || "Untitled Course"}
               </span>
               <span className="text-sm text-gray-500">{course.percentage}%</span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
