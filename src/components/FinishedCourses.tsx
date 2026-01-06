@@ -118,11 +118,11 @@ const FinishedCourses: React.FC<Props> = ({ user_id }) => {
         {courses.length === 0 ? (
           <p className="text-sm text-gray-500">No finished courses.</p>
         ) : (
-          <ul className="flex flex-col">
+          <ul className="flex flex-col gap-2">
             {displayedCourses.map((course) => (
               <li
                 key={course.course_id}
-                className="flex justify-between items-center py-2 border-l-4 border-[#ff9801] rounded-lg pl-3 cursor-pointer hover:bg-gray-50"
+                className="flex justify-between items-center py-2 border-l-4 border-[#ff9801] rounded-lg shadow-sm pl-3 cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => navigate(`/view-course/${course.course_id}`)}
               >
                 <span className="text-sm hover:underline">
