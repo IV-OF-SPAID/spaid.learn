@@ -122,13 +122,13 @@ const FinishedCourses: React.FC<Props> = ({ user_id }) => {
             {displayedCourses.map((course) => (
               <li
                 key={course.course_id}
-                className="flex justify-between items-center py-2 border-l-4 border-[#ff9801] rounded-lg shadow-sm pl-3 cursor-pointer hover:shadow-md transition-shadow"
+                className="flex justify-between items-center h-40 py-2 border-l-4 border-[#ff9801] rounded-lg shadow-sm pl-3 cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => navigate(`/view-course/${course.course_id}`)}
               >
                 <span className="text-sm hover:underline">
                   {course.course_name}
                 </span>
-                <span className={`text-xs font-medium ${getScoreColor(course.highest_quiz_score)}`}>
+                <span className={`text-xs font-medium ${getScoreColor(course.highest_quiz_score)} pr-3`}>
                   {course.highest_quiz_score !== null
                     ? `Best: ${course.highest_quiz_score}/5`
                     : "No score"}
