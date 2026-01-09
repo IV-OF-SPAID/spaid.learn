@@ -150,7 +150,12 @@ const StartQuiz: React.FC = () => {
       if (upsertError) {
         console.error("Failed to mark course completed:", upsertError);
       } else {
-        console.log("Course marked as completed with score:", quizScore, "High score:", newHighScore);
+        console.log(
+          "Course marked as completed with score:",
+          quizScore,
+          "High score:",
+          newHighScore
+        );
         setCompletionMarked(true);
       }
     } catch (err) {
@@ -188,7 +193,8 @@ const StartQuiz: React.FC = () => {
     } else {
       // Quiz finished - use the current score state
       // Need to check if current answer is correct and add to score
-      const isCurrentCorrect = selectedAnswer === questions[currentQuestionIndex].correctAnswer;
+      const isCurrentCorrect =
+        selectedAnswer === questions[currentQuestionIndex].correctAnswer;
       const calculatedFinalScore = isCurrentCorrect ? score : score;
       // score already updated in handleSubmitAnswer, so just use it
       setFinalScore(score);
@@ -275,7 +281,7 @@ const StartQuiz: React.FC = () => {
             <button
               type="button"
               className="border border-[rgba(0,0,0,0.25)] bg-[#ff9801] rounded px-5 py-2 text-sm text-black cursor-pointer"
-              onClick={() => navigate("/Settings")}
+              onClick={() => navigate("/AccountSetting")}
             >
               View My Courses
             </button>
@@ -299,34 +305,36 @@ const StartQuiz: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                {questions[currentQuestionIndex].options.map((option, index) => (
-                  <label
-                    key={index}
-                    className={`flex items-center gap-3 py-3 px-4 cursor-pointer rounded-md border-l-4 transition-all ${
-                      answered
-                        ? index ===
-                          questions[currentQuestionIndex].correctAnswer
-                          ? "border-l-green-500 bg-green-50"
-                          : index === selectedAnswer
-                          ? "border-l-red-500 bg-red-50"
-                          : "border-l-[#ff9800] bg-white"
-                        : selectedAnswer === index
-                        ? "border-l-[#ff9800] bg-orange-50"
-                        : "border-l-[#ff9800] bg-white hover:bg-gray-50"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="answer"
-                      value={index}
-                      checked={selectedAnswer === index}
-                      onChange={() => !answered && setSelectedAnswer(index)}
-                      disabled={answered}
-                      className="w-4 h-4 cursor-pointer accent-[#ff9800]"
-                    />
-                    <span className="text-sm text-black">{option}</span>
-                  </label>
-                ))}
+                {questions[currentQuestionIndex].options.map(
+                  (option, index) => (
+                    <label
+                      key={index}
+                      className={`flex items-center gap-3 py-3 px-4 cursor-pointer rounded-md border-l-4 transition-all ${
+                        answered
+                          ? index ===
+                            questions[currentQuestionIndex].correctAnswer
+                            ? "border-l-green-500 bg-green-50"
+                            : index === selectedAnswer
+                            ? "border-l-red-500 bg-red-50"
+                            : "border-l-[#ff9800] bg-white"
+                          : selectedAnswer === index
+                          ? "border-l-[#ff9800] bg-orange-50"
+                          : "border-l-[#ff9800] bg-white hover:bg-gray-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="answer"
+                        value={index}
+                        checked={selectedAnswer === index}
+                        onChange={() => !answered && setSelectedAnswer(index)}
+                        disabled={answered}
+                        className="w-4 h-4 cursor-pointer accent-[#ff9800]"
+                      />
+                      <span className="text-sm text-black">{option}</span>
+                    </label>
+                  )
+                )}
               </div>
 
               {answered && (
