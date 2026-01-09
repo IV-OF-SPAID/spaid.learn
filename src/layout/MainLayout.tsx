@@ -136,12 +136,19 @@ const MainLayout = () => {
         window.dispatchEvent(
           new CustomEvent("profile_updated", { detail: null })
         );
-        if (location.pathname !== "/" && location.pathname !== "/reset") {
+        // Allow access to login, reset, and password recovery pages without auth
+        const publicPaths = ["/", "/reset", "/passRecover"];
+        if (!publicPaths.includes(location.pathname)) {
           navigate("/", { replace: true });
         }
       }
 
-      if (authUser && location.pathname === "/") {
+      // Only redirect to home if user is authenticated, on login page, and NOT in password recovery flow
+      if (
+        authUser &&
+        location.pathname === "/" &&
+        !window.location.hash.includes("type=recovery")
+      ) {
         navigate("/Home", { replace: true });
       }
     })();

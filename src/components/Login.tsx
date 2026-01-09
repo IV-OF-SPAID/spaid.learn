@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { data, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Glogo from "../assets/img/gLogo.svg";
 import Flogo from "../assets/img/fLogo.svg";
 import supabase from "../config/supabaseClient";
@@ -17,6 +17,15 @@ const Login = () => {
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
   const [registerError, setRegisterError] = useState("");
   const navigate = useNavigate();
+
+  // Check if this is a password recovery link and redirect to PassRecover
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes("type=recovery")) {
+      // Redirect to password recovery page with the hash
+      navigate("/passRecover" + hash, { replace: true });
+    }
+  }, [navigate]);
 
   function generateRandomUsername() {
     return "user" + Math.floor(Math.random() * 9000);
@@ -128,8 +137,8 @@ const Login = () => {
     <>
       <div className="min-h-screen w-full flex justify-center items-center bg-white px-2 py-8">
         <div className="w-full max-w-3xl md:h-[450px] border-1 border-[rgba(0,0,0,0.25)] flex flex-col md:flex-row  overflow-hidden shadow-md bg-white">
-          <div 
-            className="w-full md:w-[55%] h-full border-b-1 md:border-b-0 md:border-r-1 border-[rgba(0,0,0,0.25)] hidden md:flex flex-col justify-center items-center p-6 md:p-0 bg-cover bg-center bg-no-repeat" 
+          <div
+            className="w-full md:w-[55%] h-full border-b-1 md:border-b-0 md:border-r-1 border-[rgba(0,0,0,0.25)] hidden md:flex flex-col justify-center items-center p-6 md:p-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url(${pallete})` }}
           >
             <div className="w-full max-w-xs h-auto flex flex-col justify-between">
@@ -207,14 +216,22 @@ const Login = () => {
                     />
                   )}
                 </div>
-                <div className="flex items-center px-2">
-                  <input type="checkbox" name="" id="remember" />
-                  <label
-                    htmlFor="remember"
-                    className="text-[10px] poppins-regular px-1"
+                <div className="flex items-center justify-between px-2">
+                  <div className="flex items-center">
+                    <input type="checkbox" name="" id="remember" />
+                    <label
+                      htmlFor="remember"
+                      className="text-[10px] poppins-regular px-1"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                  <Link
+                    to="/reset"
+                    className="text-[10px] text-[#013F5E] hover:underline"
                   >
-                    Remember me
-                  </label>
+                    Forgot Password?
+                  </Link>
                 </div>
                 {loginSuccess && (
                   <div className="text-green-600 text-xs">{loginSuccess}</div>
