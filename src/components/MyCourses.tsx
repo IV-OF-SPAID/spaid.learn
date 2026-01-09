@@ -73,21 +73,58 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
     if (!deleteModal.courseId) return;
 
     setDeleting(true);
+    setError(null);
     try {
+      const courseId = deleteModal.courseId;
+
+      // First, delete related user_courses records (enrollment data)
+      const { error: userCoursesError } = await supabase
+        .from("user_courses")
+        .delete()
+        .eq("course_id", courseId);
+
+      if (userCoursesError) {
+        console.error("Error deleting user_courses:", userCoursesError);
+        setError(`Failed to delete enrollments: ${userCoursesError.message}`);
+        setDeleting(false);
+        closeDeleteModal();
+        return;
+      }
+
+      // Delete related user progress records
+      const { error: progressError } = await supabase
+        .from("user_course_progress")
+        .delete()
+        .eq("course_id", courseId);
+
+      if (progressError) {
+        console.error("Error deleting progress:", progressError);
+      }
+
+      // Delete course content from storage if exists
+      const { error: storageError } = await supabase.storage
+        .from("courses")
+        .remove([`${courseId}`]);
+
+      if (storageError) {
+        console.error("Error deleting storage:", storageError);
+      }
+
+      // Finally, delete the course record
       const { error: deleteError } = await supabase
         .from("course_id")
         .delete()
-        .eq("id", deleteModal.courseId);
+        .eq("id", courseId);
 
       if (deleteError) {
+        console.error("Delete error:", deleteError);
         setError(deleteError.message);
       } else {
         // Remove from local state
-        setCourses((prev) =>
-          prev.filter((course) => course.id !== deleteModal.courseId)
-        );
+        setCourses((prev) => prev.filter((course) => course.id !== courseId));
       }
     } catch (err: any) {
+      console.error("Caught error:", err);
       setError(err?.message ?? "Failed to delete course");
     } finally {
       setDeleting(false);
