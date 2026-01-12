@@ -1,4 +1,4 @@
-import qrApp from "../../public/qr.png";
+import qrApp from "/qr.png";
 
 const QrCom = () => {
   return (

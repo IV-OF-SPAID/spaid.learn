@@ -191,7 +191,10 @@ const AccountProf = () => {
 
       // Determine final avatar URL
       const finalAvatarUrl =
-        newAvatarUrl || upserted?.avatar_url || profile?.avatar_url || authUser?.user_metadata?.avatar_url;
+        newAvatarUrl ||
+        upserted?.avatar_url ||
+        profile?.avatar_url ||
+        authUser?.user_metadata?.avatar_url;
 
       // Update auth metadata with both name and avatar
       const { error: authErr } = await supabase.auth.updateUser({
@@ -381,7 +384,7 @@ const AccountProf = () => {
                     {role !== "student" && (
                       <Link
                         to="/add-course"
-                        className="flex bg-[#ff9801] px-4 justify-center items-center h-8 rounded cursor-pointer text-sm whitespace-nowrap"
+                        className="flex text-white bg-[#ff9801] px-4 justify-center items-center h-8 rounded cursor-pointer text-sm whitespace-nowrap"
                       >
                         Add Course
                       </Link>
@@ -404,9 +407,9 @@ const AccountProf = () => {
               {!editing ? (
                 <button
                   onClick={handleStartEdit}
-                  className="flex items-center gap-2 bg-[#ff9801] px-3 h-8 rounded cursor-pointer text-sm md:text-base"
+                  className="flex text-white items-center gap-2 bg-[#ff9801] px-3 h-8 rounded cursor-pointer text-sm md:text-base"
                 >
-                  <FaPencilAlt />
+                  <FaPencilAlt className="text-white" />
                   Edit Profile
                 </button>
               ) : (
@@ -414,14 +417,14 @@ const AccountProf = () => {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center gap-2 bg-[#ff9801] cursor-pointer px-3 h-8 rounded text-sm md:text-base"
+                    className="flex items-center text-white gap-2 bg-[#ff9801] cursor-pointer px-3 h-8 rounded text-sm md:text-base"
                   >
                     {saving ? "Saving..." : "Save"}
                   </button>
                   <button
                     onClick={handleCancel}
                     disabled={saving}
-                    className="flex items-center gap-2 bg-[#ff0300] cursor-pointer px-3 h-8 rounded text-sm md:text-base"
+                    className="flex text-white items-center gap-2 bg-[#ff0300] cursor-pointer px-3 h-8 rounded text-sm md:text-base"
                   >
                     Cancel
                   </button>

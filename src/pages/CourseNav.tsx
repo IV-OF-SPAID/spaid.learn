@@ -20,7 +20,8 @@ const CourseNav: React.FC = () => {
       setError(null);
       const { data, error } = await supabase
         .from("course_id")
-        .select("id, course_name, course_description");
+        .select("id, course_name, course_description")
+        .eq("course_status", "open");
       if (error) {
         setError(error.message);
       } else {

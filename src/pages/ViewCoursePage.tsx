@@ -27,7 +27,11 @@ const ViewCoursePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Initialize progress when user starts viewing course
-  const initializeProgress = async (userId: string, courseId: string, totalPages: number) => {
+  const initializeProgress = async (
+    userId: string,
+    courseId: string,
+    totalPages: number
+  ) => {
     try {
       // Check if progress already exists
       const { data: existingProgress } = await supabase
@@ -60,26 +64,24 @@ const ViewCoursePage: React.FC = () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      
+
       if (!user || !id) return;
 
       const percentage = Math.round((pageNum / totalPages) * 100);
       const isCompleted = pageNum >= totalPages;
 
-      await supabase
-        .from("user_course_progress")
-        .upsert(
-          {
-            user_id: user.id,
-            course_id: id,
-            current_page: pageNum,
-            total_pages: totalPages,
-            percentage: percentage,
-            completed: isCompleted,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id,course_id" }
-        );
+      await supabase.from("user_course_progress").upsert(
+        {
+          user_id: user.id,
+          course_id: id,
+          current_page: pageNum,
+          total_pages: totalPages,
+          percentage: percentage,
+          completed: isCompleted,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,course_id" }
+      );
     } catch (e) {
       console.error("Error updating progress:", e);
     }
@@ -97,6 +99,11 @@ const ViewCoursePage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
+        // Get current user
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
         const { data, error } = await supabase
           .from("course_id")
           .select("*")
@@ -104,6 +111,16 @@ const ViewCoursePage: React.FC = () => {
           .single();
 
         if (error) throw error;
+
+        // Check if course is closed and user is not the uploader
+        if (data.course_status === "close" && data.uploader_id !== user?.id) {
+          if (!cancelled) {
+            setError("This course is not available.");
+            setLoading(false);
+          }
+          return;
+        }
+
         if (!cancelled) {
           setCourse(data as Course);
 
@@ -117,10 +134,6 @@ const ViewCoursePage: React.FC = () => {
             setCurrentPage(1);
 
             // Initialize progress for this course
-            const {
-              data: { user },
-            } = await supabase.auth.getUser();
-            
             if (user) {
               await initializeProgress(user.id, id, paginatedPages.length);
             }

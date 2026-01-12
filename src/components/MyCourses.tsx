@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaChevronDown } from "react-icons/fa";
 import supabase from "../config/supabaseClient";
 
 interface MyCoursesProps {
@@ -11,6 +11,7 @@ interface Course {
   id: string;
   course_name: string;
   course_description: string;
+  course_status: string;
 }
 
 const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
@@ -18,6 +19,9 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [openStatusDropdown, setOpenStatusDropdown] = useState<string | null>(
+    null
+  );
   const [deleteModal, setDeleteModal] = useState<{
     show: boolean;
     courseId: string | null;
@@ -37,7 +41,7 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
 
       const { data, error: fetchError } = await supabase
         .from("course_id")
-        .select("id, course_name, course_description")
+        .select("id, course_name, course_description, course_status")
         .eq("uploader_id", uploader_id);
 
       if (fetchError) {
@@ -54,6 +58,39 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
 
   const handleViewCourse = (courseId: string) => {
     navigate(`/course/${courseId}`);
+  };
+
+  const handleStatusChange = async (courseId: string, newStatus: string) => {
+    // Optimistically update UI
+    setCourses((prev) =>
+      prev.map((course) =>
+        course.id === courseId
+          ? { ...course, course_status: newStatus }
+          : course
+      )
+    );
+
+    // Update in database
+    const { error: updateError } = await supabase
+      .from("course_id")
+      .update({ course_status: newStatus })
+      .eq("id", courseId);
+
+    if (updateError) {
+      console.error("Error updating course status:", updateError);
+      setError("Failed to update course status");
+      // Revert on error
+      setCourses((prev) =>
+        prev.map((course) =>
+          course.id === courseId
+            ? {
+                ...course,
+                course_status: newStatus === "open" ? "close" : "open",
+              }
+            : course
+        )
+      );
+    }
   };
 
   const openDeleteModal = (
@@ -205,15 +242,67 @@ const MyCourses: React.FC<MyCoursesProps> = ({ uploader_id }) => {
                     {course.course_description}
                   </p>
                 </div>
-                <button
-                  onClick={(e) =>
-                    openDeleteModal(e, course.id, course.course_name)
-                  }
-                  className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500 transition-all cursor-pointer"
-                  title="Delete course"
-                >
-                  <FaTrash className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenStatusDropdown(
+                          openStatusDropdown === course.id ? null : course.id
+                        );
+                      }}
+                      className={`flex items-center justify-between w-[80px] text-xs px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+                        course.course_status === "open"
+                          ? "bg-[#ff9801] text-white border-[#ff9801]"
+                          : "bg-[#ff0300] text-white border-[#ff0300]"
+                      }`}
+                    >
+                      {course.course_status === "open" ? "Open" : "Closed"}
+                      <FaChevronDown className="w-2.5 h-2.5" />
+                    </button>
+                    {openStatusDropdown === course.id && (
+                      <div className="absolute right-0 top-full mt-1 bg-white rounded-lg border border-[rgba(0,0,0,0.15)] shadow-md z-10 overflow-hidden min-w-[100px]">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStatusChange(course.id, "open");
+                            setOpenStatusDropdown(null);
+                          }}
+                          className={`w-[80px] px-3 py-2 text-xs text-left hover:bg-gray-50 transition-colors ${
+                            course.course_status === "open"
+                              ? "text-[#ff9801] font-medium"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          Open
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStatusChange(course.id, "close");
+                            setOpenStatusDropdown(null);
+                          }}
+                          className={`w-full px-3 py-2 text-xs text-left hover:bg-gray-50 transition-colors border-t border-[rgba(0,0,0,0.1)] ${
+                            course.course_status === "close"
+                              ? "text-[#ff9801] font-medium"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          Closed
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={(e) =>
+                      openDeleteModal(e, course.id, course.course_name)
+                    }
+                    className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500 transition-all cursor-pointer"
+                    title="Delete course"
+                  >
+                    <FaTrash className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

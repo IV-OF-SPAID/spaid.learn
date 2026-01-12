@@ -35,6 +35,13 @@ const CourseHeader = ({ courseId }: { courseId: string | number }) => {
           .eq("id", courseId)
           .single();
         if (error) throw error;
+
+        // Check if course is closed and user is not the uploader
+        if (data.course_status === "close" && data.uploader_id !== userId) {
+          if (active) setError("This course is not available.");
+          return;
+        }
+
         if (active) setCourse(data);
       } catch (e: any) {
         if (active) setError(e?.message ?? "Failed to load course");
@@ -45,7 +52,7 @@ const CourseHeader = ({ courseId }: { courseId: string | number }) => {
     return () => {
       active = false;
     };
-  }, [courseId]);
+  }, [courseId, userId]);
 
   const handleStart = async () => {
     if (loadingAction || !course) return;
@@ -112,7 +119,7 @@ const CourseHeader = ({ courseId }: { courseId: string | number }) => {
 
   return (
     <div>
-      <div className=" rounded-xl p-7 flex flex-col gap-8 justify-between items-start bg-[url('../../public/pallete.png')]  bg-cover bg-center ">
+      <div className=" rounded-xl p-7 flex flex-col gap-8 justify-between items-start bg-[url('/pallete.png')]  bg-cover bg-center ">
         <div>
           <div className="text-xl md:text-2xl font-medium mb-2">
             {course.course_name}

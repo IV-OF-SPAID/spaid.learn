@@ -24,6 +24,7 @@ const RecoCourse = () => {
       const { data, error } = await supabase
         .from("course_id")
         .select("*")
+        .eq("course_status", "open")
         .order("id", { ascending: true });
       if (error) {
         setError(error.message);

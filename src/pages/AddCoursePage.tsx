@@ -19,7 +19,10 @@ const AddCoursePage = () => {
   // Fetch user ID from Supabase Auth directly
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
       if (error) {
         console.error("Error fetching user:", error);
         return;
@@ -127,7 +130,8 @@ const AddCoursePage = () => {
         course_description: courseDescription.trim(),
         course_content: extractedText ?? "",
         course_url: publicUrl,
-        uploader_id: profileId,  // Always include uploader_id
+        course_status: "open",
+        uploader_id: profileId, // Always include uploader_id
       };
 
       console.log("Inserting course with payload:", payload);
@@ -251,7 +255,9 @@ const AddCoursePage = () => {
               type="submit"
               disabled={loading || !profileId}
               className={`bg-gray-100 px-8 py-2 rounded-lg ${
-                !loading && profileId ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+                !loading && profileId
+                  ? "cursor-pointer"
+                  : "cursor-not-allowed opacity-50"
               } font-medium text-sm`}
             >
               {loading ? "Saving..." : "Add Course"}
